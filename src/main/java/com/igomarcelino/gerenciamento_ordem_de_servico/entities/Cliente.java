@@ -4,9 +4,10 @@ import jakarta.persistence.*;
 
 @Entity
 public class Cliente extends Pessoa{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
+    /**
+     * Cria o relacionamento com a tabela endereco
+     * */
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id", referencedColumnName = "id")
     private Endereco endereco;

@@ -1,25 +1,20 @@
-package com.igomarcelino.gerenciamento_ordem_de_servico.entities;
+package com.igomarcelino.gerenciamento_ordem_de_servico.dto;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Cliente;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Endereco;
+import org.springframework.beans.BeanUtils;
 
-/**
- * Classe Generica para criar pessoas ( Cliente e Funcionario )
- * */
+public class ClienteDTO {
 
-
-@MappedSuperclass
-public abstract class Pessoa {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nome;
     private String cpf;
     private String telefone;
     private String email;
+    private Endereco endereco;
+
+    public ClienteDTO() {
+    }
 
     public Integer getId() {
         return id;
@@ -61,14 +56,18 @@ public abstract class Pessoa {
         this.email = email;
     }
 
-    public Pessoa() {
+    public Endereco getEndereco() {
+        return endereco;
     }
 
-    public Pessoa(Integer id, String nome, String cpf, String telefone, String email) {
-        this.id = id;
-        this.nome = nome;
-        this.cpf = cpf;
-        this.telefone = telefone;
-        this.email = email;
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
+    }
+
+    /**
+     * atribui as propriedades  do cliente ao DTO
+     * */
+    public ClienteDTO (Cliente cliente){
+        BeanUtils.copyProperties(cliente,this);
     }
 }
