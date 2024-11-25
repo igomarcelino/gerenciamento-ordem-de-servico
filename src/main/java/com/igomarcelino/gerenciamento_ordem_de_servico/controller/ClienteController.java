@@ -54,5 +54,12 @@ public class ClienteController {
         clienteService.updateCliente(id,clienteUpdateDTO);
     }
 
+    @GetMapping(value = "/cliente/{cpf}")
+    @Operation(summary = "Localiza por CPF", description = "Localiza um cliente pelo cpf passado")
+    public ClienteDTO findByCPF(@PathVariable String cpf){
+        return clienteService.findByCPF(cpf);
+    }
+
+
 
 }

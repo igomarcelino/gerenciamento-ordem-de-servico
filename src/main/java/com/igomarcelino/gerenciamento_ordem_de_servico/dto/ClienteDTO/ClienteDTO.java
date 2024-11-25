@@ -2,6 +2,7 @@ package com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO;
 
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Cliente;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Endereco;
+import com.igomarcelino.gerenciamento_ordem_de_servico.projection.ClienteProjection;
 import org.springframework.beans.BeanUtils;
 
 public class ClienteDTO {
@@ -62,6 +63,15 @@ public class ClienteDTO {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
+    }
+
+    public ClienteDTO(ClienteProjection clienteProjection) {
+        id = clienteProjection.getId();
+        nome = clienteProjection.getNome();
+        cpf = clienteProjection.getCpf();
+        telefone = clienteProjection.getTelefone();
+        email = clienteProjection.getEmail();
+
     }
 
     /**

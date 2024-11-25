@@ -5,6 +5,7 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO.ClienteMin
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO.ClienteUpdateDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Cliente;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Endereco;
+import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ElementNotFoundException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.ClienteRepository;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -27,7 +29,7 @@ public class ClienteService {
 
     /**
      * Retorna todos os clientes com iformacoes reduzidas
-     * */
+     */
     @Transactional
     public List<ClienteMinDTO> findAll() {
         return clienteRepository.
@@ -39,7 +41,7 @@ public class ClienteService {
 
     /**
      * Retorna um cliente com informacoes completas
-     * */
+     */
     @Transactional
     public ClienteDTO findById(Integer id) {
         return clienteRepository.
@@ -53,25 +55,25 @@ public class ClienteService {
 
     /**
      * Realiza o cadastro de um cliente
-     * */
+     */
     public void save(Cliente cliente) {
         // Esse metodo cadastra um endereco de forma asincrona e espera o endereco para poder cadastrar o cliente
         CompletableFuture<Endereco> enderecoSaved = enderecoService.enderecoCompletableFuture(cliente.getEndereco());
 
-            try {
-                Endereco endereco = enderecoSaved.get();
-                cliente.setEndereco(endereco);
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException("Erro ao salvar endereco" + e.getMessage());
-            }
+        try {
+            Endereco endereco = enderecoSaved.get();
+            cliente.setEndereco(endereco);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Erro ao salvar endereco" + e.getMessage());
+        }
         clienteRepository.save(cliente);
     }
 
     /**
      * Atualiza um cliente
-     * */
+     */
     @Transactional
-    public void updateCliente(Integer id,ClienteUpdateDTO clienteUpdateDTO){
+    public void updateCliente(Integer id, ClienteUpdateDTO clienteUpdateDTO) {
         Cliente cliente = clienteRepository.findAll().stream().filter(clienteId -> clienteId.getId().equals(id)).findAny().get();
         cliente.setNome(clienteUpdateDTO.getNome());
         cliente.setEmail(clienteUpdateDTO.getEmail());
@@ -82,8 +84,27 @@ public class ClienteService {
 
     /**
      * Deleta um cliente pelo id
-     * */
-    public void deleteById(Integer id){
+     */
+    public void deleteById(Integer id) {
         clienteRepository.deleteById(id);
     }
+
+    /**
+     * Localiza cliente pelo CPF
+     */
+    public ClienteDTO findByCPF(String cpf) {
+        Optional<ClienteDTO> clienteDTO = clienteRepository.
+                findByCPF(cpf).
+                map(ClienteDTO::new);
+        if (clienteDTO.isPresent()){
+            var endereco = enderecoRepository.findByClienteId(clienteDTO.get().getId()).
+                    stream().
+                    findAny().
+                    map(Endereco::new).get();
+            clienteDTO.get().setEndereco(endereco);
+        }
+        return clienteDTO.orElseThrow(()-> new ElementNotFoundException("CPF: %s nao localizado", cpf));
+
+    }
+
 }
