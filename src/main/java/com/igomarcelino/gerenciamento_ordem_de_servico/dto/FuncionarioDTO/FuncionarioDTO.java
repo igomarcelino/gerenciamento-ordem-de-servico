@@ -1,6 +1,7 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.dto.FuncionarioDTO;
 
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.FuncionarioEntity.Funcionario;
+import com.igomarcelino.gerenciamento_ordem_de_servico.projection.FuncionarioProjection;
 import org.springframework.beans.BeanUtils;
 
 public class FuncionarioDTO {
@@ -17,6 +18,18 @@ public class FuncionarioDTO {
 
     public FuncionarioDTO(Funcionario funcionario){
         BeanUtils.copyProperties(funcionario, this);
+        senhaLogin = "********";
+    }
+
+    public FuncionarioDTO(FuncionarioProjection funcionarioProjection) {
+        id = funcionarioProjection.getId();
+        nome= funcionarioProjection.getNome();
+        cpf = funcionarioProjection.getCpf();
+        telefone = funcionarioProjection.getTelefone();
+        email = funcionarioProjection.getEmail();
+        usuarioLogin = funcionarioProjection.getUsuarioLogin();
+        senhaLogin = "*******";
+
     }
 
     public Integer getId() {

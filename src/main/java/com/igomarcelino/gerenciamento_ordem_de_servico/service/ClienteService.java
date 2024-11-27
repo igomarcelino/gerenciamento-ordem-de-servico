@@ -77,8 +77,8 @@ public class ClienteService {
      */
     @Transactional
     public void updateCliente(Integer id, ClienteUpdateDTO clienteUpdateDTO) {
-        Optional<Cliente> cliente = clienteRepository.findAll().stream().filter(clienteId -> clienteId.getId().equals(id)).findAny();
-        if (cliente.isPresent()){
+        Optional<Cliente> cliente = clienteRepository.findById(id);
+        if (!cliente.isEmpty()){
             cliente.get().setNome(clienteUpdateDTO.getNome());
             cliente.get().setEmail(clienteUpdateDTO.getEmail());
             cliente.get().setTelefone(clienteUpdateDTO.getTelefone());

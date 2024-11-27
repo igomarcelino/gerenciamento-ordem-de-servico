@@ -1,5 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.exceptions;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class ResponseError {

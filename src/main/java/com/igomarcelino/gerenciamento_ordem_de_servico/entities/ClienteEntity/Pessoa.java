@@ -11,7 +11,6 @@ import jakarta.validation.constraints.Size;
  * Classe Generica para criar pessoas ( Cliente e Funcionario )
  * */
 
-
 @MappedSuperclass
 public abstract class Pessoa {
 

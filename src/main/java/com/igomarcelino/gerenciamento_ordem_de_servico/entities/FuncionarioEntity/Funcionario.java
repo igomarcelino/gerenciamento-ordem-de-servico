@@ -1,10 +1,12 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.entities.FuncionarioEntity;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.dto.FuncionarioDTO.FuncionarioDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.ClienteEntity.Pessoa;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.springframework.beans.BeanUtils;
 
 @Entity
 public class Funcionario extends Pessoa {
@@ -27,6 +29,9 @@ public class Funcionario extends Pessoa {
         this.senhaLogin = senhaLogin;
     }
 
+    public Funcionario(FuncionarioDTO funcionarioDTO){
+        BeanUtils.copyProperties(funcionarioDTO,this);
+    }
     public String getUsuarioLogin() {
         return usuarioLogin;
     }
