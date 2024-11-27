@@ -76,8 +76,7 @@ public abstract class Pessoa {
     public Pessoa() {
     }
 
-    public Pessoa(Integer id, String nome, String cpf, String telefone, String email) {
-        this.id = id;
+    public Pessoa( String nome, String cpf, String telefone, String email) {
         this.nome = nome;
         this.cpf = cpf;
         this.telefone = telefone;

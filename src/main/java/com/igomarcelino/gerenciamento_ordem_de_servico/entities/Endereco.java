@@ -29,8 +29,8 @@ public class Endereco {
         CEP = enderecoProjection.getCEP();
     }
 
-    public Endereco(Long id,  String rua, String numero, String complemento, String bairro, String cidade, String estado, Integer CEP) {
-        this.id = id;
+    public Endereco(String rua, String numero, String complemento, String bairro, String cidade, String estado, Integer CEP) {
+
         this.rua = rua;
         this.numero = numero;
         this.complemento = complemento;

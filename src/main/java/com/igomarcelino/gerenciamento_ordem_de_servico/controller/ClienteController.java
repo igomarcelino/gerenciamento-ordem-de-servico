@@ -42,10 +42,10 @@ public class ClienteController {
 
     @PostMapping
     @Operation(summary = "Salvar cliente", description = "Salva um cliente")
-    public ResponseEntity<ClienteDTO> save(@RequestBody Cliente cliente){
+    public ResponseEntity<ClienteDTO> save(@RequestBody Cliente cliente, UriComponentsBuilder uriComponentsBuilder){
         ClienteDTO clienteDTO = clienteService.save(cliente);
-
-        return new ResponseEntity<ClienteDTO>(clienteDTO, HttpStatus.CREATED);
+        URI uri = uriComponentsBuilder.path("/cliente/{id}").buildAndExpand(clienteDTO.getId()).toUri();
+        return ResponseEntity.created(uri).body(new ClienteDTO(clienteDTO));
     }
 
     @DeleteMapping(value = "/{id}")

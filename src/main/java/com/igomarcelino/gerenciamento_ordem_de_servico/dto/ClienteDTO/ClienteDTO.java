@@ -80,4 +80,8 @@ public class ClienteDTO {
     public ClienteDTO (Cliente cliente){
         BeanUtils.copyProperties(cliente,this);
     }
+
+    public ClienteDTO (ClienteDTO clienteDTO){
+        BeanUtils.copyProperties(clienteDTO,this);
+    }
 }
