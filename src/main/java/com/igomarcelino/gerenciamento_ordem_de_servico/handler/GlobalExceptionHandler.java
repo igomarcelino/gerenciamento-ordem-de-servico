@@ -1,10 +1,12 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.handler;
 
-import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ElementNotFoundException;
+import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ObjectNotFoundException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ResponseError;
 import jakarta.annotation.Resource;
+import jakarta.validation.ConstraintViolationException;
 import org.aspectj.bridge.Message;
 import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.lang.reflect.UndeclaredThrowableException;
 import java.time.Instant;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -44,7 +47,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handlerGeneral(Exception e , WebRequest request){
         if (e.getClass().isAssignableFrom(UndeclaredThrowableException.class)){
             UndeclaredThrowableException exception = (UndeclaredThrowableException) e;
-            return handlerElementNotFoundException((ElementNotFoundException) exception.getUndeclaredThrowable(),request);
+            return handlerObjectNotFoundException((ObjectNotFoundException) exception.getUndeclaredThrowable(),request);
         }else {
             String message = messageSource.getMessage("error.server", new Object[]{e.getMessage()},null);
             ResponseError error = responseError(message,HttpStatus.INTERNAL_SERVER_ERROR);
@@ -53,9 +56,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // elemento nao localizado
-    @ExceptionHandler({ElementNotFoundException.class})
-    private ResponseEntity<Object> handlerElementNotFoundException(ElementNotFoundException e, WebRequest request) {
+    @ExceptionHandler({ObjectNotFoundException.class})
+    private ResponseEntity<Object> handlerObjectNotFoundException(ObjectNotFoundException e, WebRequest request) {
         ResponseError error = responseError(e.getMessage(),HttpStatus.NOT_FOUND);
         return handleExceptionInternal(e,error,headers(),HttpStatus.NOT_FOUND,request);
     }
+
+    @ExceptionHandler({ConstraintViolationException.class})
+    private ResponseEntity<Object> handlerConstraintViolationException(ConstraintViolationException e, WebRequest request) {
+        ResponseError error = responseError(
+                e.getConstraintViolations().
+                        stream().
+                        map(constraintViolation -> constraintViolation.getMessageTemplate())
+                        .collect(Collectors.joining()), HttpStatus.CONFLICT);
+        return handleExceptionInternal(e,error,headers(),HttpStatus.CONFLICT,request);
+    }
+
+    @ExceptionHandler({DataIntegrityViolationException.class})
+    private ResponseEntity<Object> handlerDataIntegrityViolationException(DataIntegrityViolationException e, WebRequest request) {
+        ResponseError error = responseError("CPF ja cadastrado ",HttpStatus.UNPROCESSABLE_ENTITY);
+        return handleExceptionInternal(e,error,headers(),HttpStatus.UNPROCESSABLE_ENTITY,request);
+    }
+
 }

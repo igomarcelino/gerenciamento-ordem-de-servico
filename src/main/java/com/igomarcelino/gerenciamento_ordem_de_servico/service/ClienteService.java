@@ -5,17 +5,25 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO.ClienteMin
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO.ClienteUpdateDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Cliente;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Endereco;
-import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ElementNotFoundException;
+import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ObjectNotFoundException;
+import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.FieldsException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.ClienteRepository;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.EnderecoRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class ClienteService {
@@ -50,13 +58,13 @@ public class ClienteService {
                 filter(cliente -> cliente.getId().equals(id)).
                 map(ClienteDTO::new).
                 findAny().
-                get();
+                orElseThrow(() -> new ObjectNotFoundException("Cliente nao localizado"));
     }
 
     /**
      * Realiza o cadastro de um cliente
      */
-    public void save(Cliente cliente) {
+    public ClienteDTO save(Cliente cliente) {
         // Esse metodo cadastra um endereco de forma asincrona e espera o endereco para poder cadastrar o cliente
         CompletableFuture<Endereco> enderecoSaved = enderecoService.enderecoCompletableFuture(cliente.getEndereco());
 
@@ -67,6 +75,9 @@ public class ClienteService {
             throw new RuntimeException("Erro ao salvar endereco" + e.getMessage());
         }
         clienteRepository.save(cliente);
+
+
+        return new ClienteDTO(cliente);
     }
 
     /**
@@ -74,19 +85,28 @@ public class ClienteService {
      */
     @Transactional
     public void updateCliente(Integer id, ClienteUpdateDTO clienteUpdateDTO) {
-        Cliente cliente = clienteRepository.findAll().stream().filter(clienteId -> clienteId.getId().equals(id)).findAny().get();
-        cliente.setNome(clienteUpdateDTO.getNome());
-        cliente.setEmail(clienteUpdateDTO.getEmail());
-        cliente.setTelefone(clienteUpdateDTO.getTelefone());
-        cliente.setEndereco(clienteUpdateDTO.getEndereco());
-        clienteRepository.save(cliente);
+        Optional<Cliente> cliente = clienteRepository.findAll().stream().filter(clienteId -> clienteId.getId().equals(id)).findAny();
+        if (cliente.isPresent()){
+            cliente.get().setNome(clienteUpdateDTO.getNome());
+            cliente.get().setEmail(clienteUpdateDTO.getEmail());
+            cliente.get().setTelefone(clienteUpdateDTO.getTelefone());
+            cliente.get().setEndereco(clienteUpdateDTO.getEndereco());
+            clienteRepository.save(cliente.get());
+        }else {
+            throw new ObjectNotFoundException("ID %d nao localizado",id);
+        }
     }
 
     /**
      * Deleta um cliente pelo id
      */
     public void deleteById(Integer id) {
-        clienteRepository.deleteById(id);
+        ClienteDTO cliente = findById(id);
+        if (cliente != null)
+            clienteRepository.deleteById(id);
+        else {
+            throw new ObjectNotFoundException("Cliente nao existe");
+        }
     }
 
     /**
@@ -103,7 +123,7 @@ public class ClienteService {
                     map(Endereco::new).get();
             clienteDTO.get().setEndereco(endereco);
         }
-        return clienteDTO.orElseThrow(()-> new ElementNotFoundException("CPF: %s nao localizado", cpf));
+        return clienteDTO.orElseThrow(()-> new ObjectNotFoundException("CPF: %s nao localizado", cpf));
 
     }
 
