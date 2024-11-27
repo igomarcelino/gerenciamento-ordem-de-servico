@@ -1,7 +1,7 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO;
 
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Cliente;
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Endereco;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.ClienteEntity.Cliente;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.EnderecoEntity.Endereco;
 import com.igomarcelino.gerenciamento_ordem_de_servico.projection.ClienteProjection;
 import org.springframework.beans.BeanUtils;
 

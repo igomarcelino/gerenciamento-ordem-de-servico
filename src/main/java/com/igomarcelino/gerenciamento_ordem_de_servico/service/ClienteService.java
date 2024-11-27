@@ -3,27 +3,19 @@ package com.igomarcelino.gerenciamento_ordem_de_servico.service;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO.ClienteDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO.ClienteMinDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO.ClienteUpdateDTO;
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Cliente;
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Endereco;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.ClienteEntity.Cliente;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.EnderecoEntity.Endereco;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ObjectNotFoundException;
-import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.FieldsException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.ClienteRepository;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.EnderecoRepository;
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 public class ClienteService {

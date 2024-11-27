@@ -1,7 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.repository;
 
-import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO.ClienteDTO;
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Cliente;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.ClienteEntity.Cliente;
 import com.igomarcelino.gerenciamento_ordem_de_servico.projection.ClienteProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

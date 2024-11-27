@@ -20,3 +20,10 @@ INSERT INTO cliente (cpf, email, nome, telefone, endereco_id) VALUES   ('7890123
 INSERT INTO cliente (cpf, email, nome, telefone, endereco_id) VALUES  ('89012345678', 'juliana.silveira@example.com', 'Juliana Silveira', '55599008877', 8);
 INSERT INTO cliente (cpf, email, nome, telefone, endereco_id) VALUES  ('90123456789', 'carlos.pereira@example.com', 'Carlos Pereira', '55500998877', 9);
 INSERT INTO cliente (cpf, email, nome, telefone, endereco_id) VALUES  ('01234567890', 'lara.dias@example.com', 'Lara Dias', '55522334455', 10);
+
+
+INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Igo Marcelino', '99933322299', 'igo@email.com', '11988772233', 'igomarcelino', '123456')
+INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Ana Paula', '88811144455', 'ana.paula@email.com', '11987654321', 'anapaula', '654321');
+INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Carlos Silva', '77722233344', 'carlos.silva@email.com', '11999887766', 'carlossilva', 'abcdef');
+INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Mariana Santos', '66633344455', 'mariana.santos@email.com', '11988776655', 'marianasantos', '123abc');
+INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Ricardo Pereira', '55544466677', 'ricardo.pereira@email.com', '11977665544', 'ricardopereira', 'pass123');

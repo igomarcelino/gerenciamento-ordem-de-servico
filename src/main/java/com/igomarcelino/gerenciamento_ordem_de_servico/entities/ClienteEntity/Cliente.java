@@ -1,5 +1,6 @@
-package com.igomarcelino.gerenciamento_ordem_de_servico.entities;
+package com.igomarcelino.gerenciamento_ordem_de_servico.entities.ClienteEntity;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.EnderecoEntity.Endereco;
 import jakarta.persistence.*;
 
 @Entity
