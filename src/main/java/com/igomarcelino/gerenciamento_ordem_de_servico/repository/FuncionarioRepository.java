@@ -1,6 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.repository;
 
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.FuncionarioEntity.Funcionario;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Funcionario;
 import com.igomarcelino.gerenciamento_ordem_de_servico.projection.FuncionarioProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

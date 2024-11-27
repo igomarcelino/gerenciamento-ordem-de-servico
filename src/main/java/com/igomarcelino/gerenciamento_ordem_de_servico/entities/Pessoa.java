@@ -1,4 +1,4 @@
-package com.igomarcelino.gerenciamento_ordem_de_servico.entities.ClienteEntity;
+package com.igomarcelino.gerenciamento_ordem_de_servico.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.Valid;

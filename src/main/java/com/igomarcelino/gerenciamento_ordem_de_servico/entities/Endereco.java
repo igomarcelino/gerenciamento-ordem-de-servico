@@ -1,4 +1,4 @@
-package com.igomarcelino.gerenciamento_ordem_de_servico.entities.EnderecoEntity;
+package com.igomarcelino.gerenciamento_ordem_de_servico.entities;
 
 import com.igomarcelino.gerenciamento_ordem_de_servico.projection.EnderecoProjection;
 import jakarta.persistence.*;

@@ -2,8 +2,7 @@ package com.igomarcelino.gerenciamento_ordem_de_servico.service;
 
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.FuncionarioDTO.FuncionarioDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.FuncionarioDTO.FuncionarioMinDTO;
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.ClienteEntity.Cliente;
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.FuncionarioEntity.Funcionario;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Funcionario;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ObjectNotFoundException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.FuncionarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class FuncionarioService {

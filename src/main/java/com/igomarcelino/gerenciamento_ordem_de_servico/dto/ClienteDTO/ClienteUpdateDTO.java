@@ -1,6 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO;
 
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.EnderecoEntity.Endereco;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Endereco;
 /**
  * Classe utilizada para atualizar Cliente Caso Exista
  * */

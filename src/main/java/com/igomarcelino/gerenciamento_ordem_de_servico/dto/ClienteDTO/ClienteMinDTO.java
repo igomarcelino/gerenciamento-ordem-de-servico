@@ -1,6 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO;
 
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.ClienteEntity.Cliente;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Cliente;
 
 public class ClienteMinDTO {
 

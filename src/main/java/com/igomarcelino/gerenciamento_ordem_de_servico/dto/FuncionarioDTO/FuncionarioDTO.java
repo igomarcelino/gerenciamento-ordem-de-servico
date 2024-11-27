@@ -1,6 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.dto.FuncionarioDTO;
 
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.FuncionarioEntity.Funcionario;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Funcionario;
 import com.igomarcelino.gerenciamento_ordem_de_servico.projection.FuncionarioProjection;
 import org.springframework.beans.BeanUtils;
 

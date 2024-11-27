@@ -1,10 +1,9 @@
-package com.igomarcelino.gerenciamento_ordem_de_servico.entities.ClienteEntity;
+package com.igomarcelino.gerenciamento_ordem_de_servico.entities;
 
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.EnderecoEntity.Endereco;
 import jakarta.persistence.*;
 
 @Entity
-public class Cliente extends Pessoa{
+public class Cliente extends Pessoa {
 
     /**
      * Cria o relacionamento com a tabela endereco

@@ -1,7 +1,6 @@
-package com.igomarcelino.gerenciamento_ordem_de_servico.entities.FuncionarioEntity;
+package com.igomarcelino.gerenciamento_ordem_de_servico.entities;
 
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.FuncionarioDTO.FuncionarioDTO;
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.ClienteEntity.Pessoa;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
