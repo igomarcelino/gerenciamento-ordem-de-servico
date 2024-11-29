@@ -27,3 +27,8 @@ INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) 
 INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Carlos Silva', '77722233344', 'carlos.silva@email.com', '11999887766', 'carlossilva', 'abcdef');
 INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Mariana Santos', '66633344455', 'mariana.santos@email.com', '11988776655', 'marianasantos', '123abc');
 INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Ricardo Pereira', '55544466677', 'ricardo.pereira@email.com', '11977665544', 'ricardopereira', 'pass123');
+
+
+INSERT INTO servico(descricao, valor) VALUES('Formatacao de Computador', 120.00);
+INSERT INTO servico(descricao, valor) VALUES('Troca de Processador', 180.00);
+INSERT INTO servico(descricao, valor) VALUES('Limpeza completa', 200.00);
