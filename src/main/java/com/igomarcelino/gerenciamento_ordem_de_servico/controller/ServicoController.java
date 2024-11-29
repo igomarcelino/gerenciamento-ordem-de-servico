@@ -54,4 +54,10 @@ public class ServicoController {
         return ResponseEntity.ok().body(servicoService.findByDescricao(descricao));
     }
 
+    @DeleteMapping(value = "delete/{id}")
+    @Operation(summary = "Deleta um Servico", description = "Deleta um servico pelo id informado")
+    public ResponseEntity<Void> deteleById(@PathVariable Integer id){
+        servicoService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

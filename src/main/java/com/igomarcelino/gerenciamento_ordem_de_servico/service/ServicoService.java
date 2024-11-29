@@ -84,6 +84,17 @@ public class ServicoService {
         return servicoRepository.findBydescricao(descricao.toLowerCase()).get().stream().map(ServicoDTO::new).toList();
     }
 
+    /**
+     * Deleta um servio
+     * */
+    public void delete(Integer id){
+        var servicoToDelete = servicoRepository.findById(id);
+        if (!servicoToDelete.isEmpty()){
+            servicoRepository.delete(servicoToDelete.get());
+        }else {
+            throw new ObjectNotFoundException("Servico nao localizado");
+        }
+    }
 
 
 }
