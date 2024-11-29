@@ -3,13 +3,19 @@ package com.igomarcelino.gerenciamento_ordem_de_servico.service;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ServicoDTO.ServicoDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ServicoDTO.ServicoRequestDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Servico;
+import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.DataAlreadyExistsException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ObjectNotFoundException;
+import com.igomarcelino.gerenciamento_ordem_de_servico.projection.ServicoProjection;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.ServicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 public class ServicoService {
@@ -22,9 +28,18 @@ public class ServicoService {
      * Adiciona um Servico
      * */
     public ServicoDTO save(ServicoRequestDTO servicoRequestDTO){
+            List<Servico> servicoDTOList = servicoRepository.findAll();
             var servico = new Servico(servicoRequestDTO);
-            servicoRepository.save(servico);
-            return new ServicoDTO(servico);
+            Collections.sort(servicoDTOList);
+            int contains = Collections.binarySearch(servicoDTOList,new Servico(servicoRequestDTO));
+
+           // boolean contains = servicoDTOList.stream().anyMatch(servico1 -> servico1.equals(new Servico(servicoRequestDTO)));
+        if (contains < 0){
+                servicoRepository.save(servico);
+                return new ServicoDTO(servico);
+        }else {
+            throw new DataAlreadyExistsException("Servico ja Cadastrado");
+        }
     }
 
     /**
@@ -64,10 +79,10 @@ public class ServicoService {
     /**
      * Procura por descricao
      * */
-  /*  public List<ServicoDTO> findByDescricao(String descricao){
-        return servicoRepository.findBydescricao(descricao).map(ServicoDTO::new)
-
-    }*/
+    public List<ServicoDTO> findByDescricao(String descricao){
+       // return servicoRepository.findBydescricao(descricao).stream().map(servicoProjections -> servicoProjections.stream().findAny().get()).map(ServicoDTO::new).toList();
+        return servicoRepository.findBydescricao(descricao.toLowerCase()).get().stream().map(ServicoDTO::new).toList();
+    }
 
 
 

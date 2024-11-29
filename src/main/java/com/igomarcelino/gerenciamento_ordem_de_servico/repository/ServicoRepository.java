@@ -12,7 +12,7 @@ public interface ServicoRepository extends JpaRepository<Servico, Integer> {
 
     @Query(nativeQuery = true,value = """
             SELECT * FROM SERVICO
-            WHERE DESCRICAO LIKE %:descricao%;
+            WHERE LOWER(DESCRICAO) LIKE %:descricao%;
             """)
     Optional<List<ServicoProjection>> findBydescricao(String descricao);
 }

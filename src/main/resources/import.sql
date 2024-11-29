@@ -32,3 +32,11 @@ INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) 
 INSERT INTO servico(descricao, valor) VALUES('Formatacao de Computador', 120.00);
 INSERT INTO servico(descricao, valor) VALUES('Troca de Processador', 180.00);
 INSERT INTO servico(descricao, valor) VALUES('Limpeza completa', 200.00);
+INSERT INTO servico(descricao, valor) VALUES('Reparo de Processador', 600.00);
+INSERT INTO servico(descricao, valor) VALUES('Troca de Tela', 450.00);
+INSERT INTO servico(descricao, valor) VALUES('Instalação de Software', 150.00);
+INSERT INTO servico(descricao, valor) VALUES('Limpeza Interna', 200.00);
+INSERT INTO servico(descricao, valor) VALUES('Upgrade de Memória RAM', 300.00);
+INSERT INTO servico(descricao, valor) VALUES('Substituição de Teclado', 250.00);
+INSERT INTO servico(descricao, valor) VALUES('Configuração de Rede', 350.00);
+

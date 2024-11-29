@@ -1,5 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.handler;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.DataAlreadyExistsException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ObjectNotFoundException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ResponseError;
 import jakarta.annotation.Resource;
@@ -77,7 +78,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     private ResponseEntity<Object> handlerDataIntegrityViolationException(DataIntegrityViolationException e, WebRequest request) {
-        ResponseError error = responseError("CPF ja cadastrado ", HttpStatus.UNPROCESSABLE_ENTITY);
+        ResponseError error = responseError("Cpf ja cadastrado.", HttpStatus.UNPROCESSABLE_ENTITY);
         return handleExceptionInternal(e, error, headers(), HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
@@ -99,4 +100,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ResponseError error = responseError(e.getLocalizedMessage() + ": Verificar na documentacao o padrao de objeto",HttpStatus.BAD_REQUEST);
         return handleExceptionInternal(e,error,headers(),HttpStatus.BAD_REQUEST,request);
     }
+
+    @ExceptionHandler({DataAlreadyExistsException.class})
+    private ResponseEntity<Object> handlerDataAlreadyExistsException(DataAlreadyExistsException e, WebRequest request){
+        ResponseError error = responseError(e.getMessage(),HttpStatus.CONFLICT);
+        return handleExceptionInternal(e, error,headers(),HttpStatus.CONFLICT, request);
+    }
+
 }

@@ -31,4 +31,21 @@ public class ServicoRequestDTO {
     public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ServicoRequestDTO that)) return false;
+
+        if (getDescricao() != null ? !getDescricao().equals(that.getDescricao()) : that.getDescricao() != null)
+            return false;
+        return getValor() != null ? getValor().equals(that.getValor()) : that.getValor() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getDescricao() != null ? getDescricao().hashCode() : 0;
+        result = 31 * result + (getValor() != null ? getValor().hashCode() : 0);
+        return result;
+    }
 }

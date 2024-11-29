@@ -8,7 +8,7 @@ import org.springframework.beans.BeanUtils;
 import java.math.BigDecimal;
 
 @Entity
-public class Servico {
+public class Servico implements Comparable<Servico> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,5 +70,28 @@ public class Servico {
                 ", descricao='" + descricao + '\'' +
                 ", valor=" + valor +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Servico servico)) return false;
+
+        if (getDescricao() != null ? !getDescricao().equals(servico.getDescricao()) : servico.getDescricao() != null)
+            return false;
+        return getValor() != null ? getValor().equals(servico.getValor()) : servico.getValor() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getDescricao() != null ? getDescricao().hashCode() : 0;
+        result = 31 * result + (getValor() != null ? getValor().hashCode() : 0);
+        return result;
+    }
+
+
+    @Override
+    public int compareTo(Servico o) {
+        return descricao.compareTo(o.getDescricao());
     }
 }
