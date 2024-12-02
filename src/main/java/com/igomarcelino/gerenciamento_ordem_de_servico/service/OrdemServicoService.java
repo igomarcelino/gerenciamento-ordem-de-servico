@@ -7,6 +7,8 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.repository.OrdemServicoRe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OrdemServicoService {
 
@@ -17,6 +19,17 @@ public class OrdemServicoService {
         var ordemServico = new OrdemServico(ordemServicoDTO);
         ordemServicoRepository.save(ordemServico);
         return new OrdemServicoDTO(ordemServico);
+    }
+
+    public List<OrdemServicoDTO> findAll(){
+        return ordemServicoRepository.findAll().
+                stream().
+                map(OrdemServicoDTO::new).
+                toList();
+    }
+
+    public OrdemServicoDTO findById(Integer id){
+        return ordemServicoRepository.findById(id).map(OrdemServicoDTO::new).get();
     }
 
 }
