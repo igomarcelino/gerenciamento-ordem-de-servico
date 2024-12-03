@@ -1,5 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.controller;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoRequestDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Servico;
@@ -40,5 +41,12 @@ public class OrdemServicoController {
     @Operation(summary = "Ordem por ID", description = "Mostra a ordem de servico pelo id dela")
     public ResponseEntity<OrdemServicoDTO> findById(@PathVariable Integer id){
         return ResponseEntity.internalServerError().body(ordemServicoService.findById(id));
+    }
+
+    @PutMapping (value = "/atualizar/{id}")
+    @Operation(summary = "Atualiza Status Ordem", description = "Atualiza o status da ordem de servico")
+    public ResponseEntity<OrdemServicoDTO> updateStatus(@PathVariable Integer id, StatusOrdem statusOrdem){
+        var ordemUpdated = ordemServicoService.finalizarOrdem(id,statusOrdem);
+        return ResponseEntity.ok().body(ordemUpdated);
     }
 }

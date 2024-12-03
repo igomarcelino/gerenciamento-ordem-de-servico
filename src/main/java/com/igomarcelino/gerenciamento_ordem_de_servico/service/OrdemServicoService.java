@@ -1,10 +1,12 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.service;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoRequestDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.OrdemServico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Servico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.ServicoBelonging;
+import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ObjectNotFoundException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.OrdemServicoRepository;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.ServicoBelongingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,5 +56,21 @@ public class OrdemServicoService {
     public OrdemServicoDTO findById(Integer id) {
         return ordemServicoRepository.findById(id).map(OrdemServicoDTO::new).get();
     }
+
+    public OrdemServicoDTO finalizarOrdem(Integer id, StatusOrdem statusOrdem){
+        var ordemServico = ordemServicoRepository.findById(id);
+        var ordemAtualizada = new OrdemServico();
+        if (!ordemServico.isEmpty()){
+            ordemServico.get().setStatusOrdem(statusOrdem);
+            ordemAtualizada = OrdemServico.verificaStatusOrdem(ordemServico.get());
+            ordemServicoRepository.save(ordemAtualizada);
+        }else {
+            throw new ObjectNotFoundException("A Ordem de numero: %d nao foi localizada!", id);
+        }
+        return new OrdemServicoDTO(ordemAtualizada);
+    }
+
+
+
 
 }

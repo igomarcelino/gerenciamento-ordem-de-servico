@@ -5,6 +5,7 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.entities.OrdemServico;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 
 public class OrdemServicoDTO {
@@ -14,6 +15,7 @@ public class OrdemServicoDTO {
     private Integer pagamento_id;
     private StatusOrdem statusOrdem;
     private BigDecimal valor;
+    private LocalDate vencimento;
 
     public BigDecimal getValor() {
         return valor;
@@ -39,6 +41,7 @@ public class OrdemServicoDTO {
     public OrdemServicoDTO(OrdemServico ordemServico){
         BeanUtils.copyProperties(ordemServico, this);
     }
+
     public OrdemServicoDTO(OrdemServicoRequestDTO ordemServicoRequestDTO){
         funcionario_id = ordemServicoRequestDTO.getFuncionario_id();
         cliente_id = ordemServicoRequestDTO.getCliente_id();
@@ -46,6 +49,13 @@ public class OrdemServicoDTO {
         statusOrdem = StatusOrdem.ABERTA;
 
 
+    }
+    public LocalDate getVencimento() {
+        return vencimento;
+    }
+
+    public void setVencimento(LocalDate vencimento) {
+        this.vencimento = vencimento;
     }
 
     public Integer getId() {

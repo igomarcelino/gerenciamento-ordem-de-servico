@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 public class OrdemServico {
@@ -20,6 +21,7 @@ public class OrdemServico {
     private BigDecimal valor;
     @Enumerated(EnumType.STRING)
     private StatusOrdem statusOrdem;
+    private LocalDate vencimento;
 
     public OrdemServico() {
     }
@@ -51,8 +53,25 @@ public class OrdemServico {
 
     }
 
+    public static OrdemServico verificaStatusOrdem(OrdemServico ordemServico){
+        if (ordemServico.statusOrdem == StatusOrdem.FINALIZADA){
+            ordemServico.setVencimento(LocalDate.now().plusDays(5));
+        }
+        return ordemServico;
+    }
+
+
+
     public OrdemServico(OrdemServicoDTO ordemServicoDTO) {
         BeanUtils.copyProperties(ordemServicoDTO,this);
+    }
+
+    public LocalDate getVencimento() {
+        return vencimento;
+    }
+
+    public void setVencimento(LocalDate vencimento) {
+        this.vencimento = vencimento;
     }
 
     public Integer getId() {
