@@ -49,4 +49,11 @@ public class OrdemServicoController {
         var ordemUpdated = ordemServicoService.finalizarOrdem(id,statusOrdem);
         return ResponseEntity.ok().body(ordemUpdated);
     }
+
+    @GetMapping(value = "/ordensPorStatus")
+    @Operation(summary = "Ordem por status", description = "Lista as ordens de servico pelo status")
+    public ResponseEntity<List<OrdemServicoRequestDTO>> findByStatus(StatusOrdem statusOrdem){
+        var ordensPorStatus = ordemServicoService.ordensPorStatus(statusOrdem);
+        return ResponseEntity.ok().body(ordensPorStatus);
+    }
 }

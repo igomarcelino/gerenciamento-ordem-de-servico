@@ -6,6 +6,8 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.Ordem
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.OrdemServico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Servico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.ServicoBelonging;
+import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.DataAlreadyExistsException;
+import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.FieldsException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ObjectNotFoundException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.OrdemServicoRepository;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.ServicoBelongingRepository;
@@ -52,24 +54,34 @@ public class OrdemServicoService {
                 map(OrdemServicoDTO::new).
                 toList();
     }
-
+    /**
+     * Localizar pelo ID
+     * */
     public OrdemServicoDTO findById(Integer id) {
         return ordemServicoRepository.findById(id).map(OrdemServicoDTO::new).get();
     }
 
+    /**
+     * Finalizar Ordem de servico
+     * */
     public OrdemServicoDTO finalizarOrdem(Integer id, StatusOrdem statusOrdem){
         var ordemServico = ordemServicoRepository.findById(id);
         var ordemAtualizada = new OrdemServico();
-        if (!ordemServico.isEmpty()){
+        if (ordemServico.get().getStatusOrdem() == StatusOrdem.FINALIZADA){
+            throw new DataAlreadyExistsException("A ordem com o id %d ja se encontra finalizada", id);
+        } else if (!ordemServico.isEmpty()) {
             ordemServico.get().setStatusOrdem(statusOrdem);
             ordemAtualizada = OrdemServico.verificaStatusOrdem(ordemServico.get());
             ordemServicoRepository.save(ordemAtualizada);
-        }else {
+        } else {
             throw new ObjectNotFoundException("A Ordem de numero: %d nao foi localizada!", id);
         }
         return new OrdemServicoDTO(ordemAtualizada);
     }
 
+   public List<OrdemServicoRequestDTO> ordensPorStatus(StatusOrdem statusOrdem){
+        return ordemServicoRepository.findByStatus(statusOrdem.name()).stream().map(OrdemServicoRequestDTO::new).toList();
+    }
 
 
 
