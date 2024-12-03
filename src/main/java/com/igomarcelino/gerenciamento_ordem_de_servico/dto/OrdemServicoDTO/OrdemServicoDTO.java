@@ -4,6 +4,8 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.OrdemServico;
 import org.springframework.beans.BeanUtils;
 
+import java.math.BigDecimal;
+
 
 public class OrdemServicoDTO {
     private Integer id;
@@ -11,6 +13,15 @@ public class OrdemServicoDTO {
     private Integer cliente_id;
     private Integer pagamento_id;
     private StatusOrdem statusOrdem;
+    private BigDecimal valor;
+
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
+    }
 
     public OrdemServicoDTO() {
     }
@@ -21,6 +32,8 @@ public class OrdemServicoDTO {
         this.cliente_id = cliente_id;
         this.pagamento_id = pagamento_id;
         this.statusOrdem = statusOrdem;
+        valor = null;
+
     }
 
     public OrdemServicoDTO(OrdemServico ordemServico){
@@ -31,6 +44,7 @@ public class OrdemServicoDTO {
         cliente_id = ordemServicoRequestDTO.getCliente_id();
         pagamento_id = 0;
         statusOrdem = StatusOrdem.ABERTA;
+
 
     }
 

@@ -4,10 +4,14 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
+import java.math.BigDecimal;
+
 public class OrdemServicoRequestDTO {
 
     private Integer funcionario_id;
     private Integer cliente_id;
+
+
 
     public OrdemServicoRequestDTO() {
     }

@@ -32,6 +32,10 @@ public class Servico implements Comparable<Servico> {
         this.valor = servicoRequestDTO.getValor();
     }
 
+    public static Servico fromDto(ServicoDTO servicoDTO){
+        return new Servico(servicoDTO);
+    }
+
     public Servico(ServicoDTO servicoDTO){
         BeanUtils.copyProperties(servicoDTO,this);
     }

@@ -12,8 +12,17 @@ public class ServicoBelonging {
     public ServicoBelonging() {
     }
 
+    public ServicoBelongingPK getId() {
+        return id;
+    }
+
+    public void setId(ServicoBelongingPK id) {
+        this.id = id;
+    }
+
     public ServicoBelonging(Servico servico, OrdemServico ordemServico) {
         id.setServico(servico);
         id.setOrdemServico(ordemServico);
     }
+
 }

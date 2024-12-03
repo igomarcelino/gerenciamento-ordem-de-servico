@@ -2,6 +2,7 @@ package com.igomarcelino.gerenciamento_ordem_de_servico.controller;
 
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoRequestDTO;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Servico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.service.OrdemServicoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,10 +24,10 @@ public class OrdemServicoController {
 
     @PostMapping
     @Operation(summary = "Salvar Ordem", description = "Salva uma ordem de servico no banco de dados")
-    public ResponseEntity<OrdemServicoDTO> save(@RequestBody OrdemServicoRequestDTO ordemServicoRequestDTO, UriComponentsBuilder builder){
-        var ordemServico = new OrdemServicoDTO(ordemServicoRequestDTO);
-        URI uri = builder.path("ordemServico/{id}").buildAndExpand(ordemServico.getId()).toUri();
-        return ResponseEntity.created(uri).body(ordemServicoService.save(ordemServico));
+    public ResponseEntity<OrdemServicoDTO> save(@RequestBody OrdemServicoRequestDTO ordemServicoRequestDTO, int[] id_servico, UriComponentsBuilder builder){
+        var ordemServico = ordemServicoService.save(ordemServicoRequestDTO,id_servico);
+        //URI uri = builder.path("ordemServico/{id}").buildAndExpand(ordemServico.getId()).toUri();
+        return ResponseEntity.ok().body(ordemServico);
     }
 
     @GetMapping
