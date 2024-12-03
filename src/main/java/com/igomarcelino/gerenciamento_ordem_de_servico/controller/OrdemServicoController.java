@@ -3,6 +3,7 @@ package com.igomarcelino.gerenciamento_ordem_de_servico.controller;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoRequestDTO;
+import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoResumeDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Servico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.service.OrdemServicoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,5 +56,12 @@ public class OrdemServicoController {
     public ResponseEntity<List<OrdemServicoRequestDTO>> findByStatus(StatusOrdem statusOrdem){
         var ordensPorStatus = ordemServicoService.ordensPorStatus(statusOrdem);
         return ResponseEntity.ok().body(ordensPorStatus);
+    }
+
+    @GetMapping(value = "/ordemPorCPF")
+    @Operation(summary = "Ordem por CPF de cliente", description = "Retorna todas as ordens para determinado cliete")
+    public ResponseEntity<List<OrdemServicoResumeDTO>> findbyCPFCliente(String cpf){
+        var ordemPorCPF = ordemServicoService.ordemPorCliente(cpf);
+        return ResponseEntity.ok().body(ordemPorCPF);
     }
 }

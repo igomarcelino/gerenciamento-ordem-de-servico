@@ -3,6 +3,7 @@ package com.igomarcelino.gerenciamento_ordem_de_servico.service;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoRequestDTO;
+import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoResumeDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.OrdemServico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Servico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.ServicoBelonging;
@@ -83,6 +84,9 @@ public class OrdemServicoService {
         return ordemServicoRepository.findByStatus(statusOrdem.name()).stream().map(OrdemServicoRequestDTO::new).toList();
     }
 
+    public List<OrdemServicoResumeDTO> ordemPorCliente(String cpf){
+        return ordemServicoRepository.findByCpfCliente(cpf).get().stream().map(OrdemServicoResumeDTO::new).toList();
+    }
 
 
 }

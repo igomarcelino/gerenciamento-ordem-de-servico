@@ -12,7 +12,5 @@ import java.util.List;
 
 public interface ServicoBelongingRepository extends JpaRepository<ServicoBelonging, ServicoBelongingPK> {
 
-    @Modifying
-    @Query(nativeQuery = true, value = "INSERT INTO SERVICO_BELONGING (ORDEM_ID, SERVICO_ID) VALUES (:ordemId, :servicoId)")
-    void insertServicoBelonging(@Param("ordemId") Integer ordemId, @Param("servicoId") Integer servicoId);
+
 }

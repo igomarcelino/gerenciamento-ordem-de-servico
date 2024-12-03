@@ -2,6 +2,7 @@ package com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO;
 
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.OrdemServico;
+import com.igomarcelino.gerenciamento_ordem_de_servico.projection.OrdemServicoProjection;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
@@ -16,6 +17,14 @@ public class OrdemServicoDTO {
     private StatusOrdem statusOrdem;
     private BigDecimal valor;
     private LocalDate vencimento;
+
+    public OrdemServicoDTO(OrdemServicoProjection ordemServicoProjection) {
+         setId(ordemServicoProjection.getId());
+         setStatusOrdem(ordemServicoProjection.getStatusOrdem());
+         setValor(ordemServicoProjection.getValor());
+         setVencimento(ordemServicoProjection.getVencimento());
+         setPagamento_id(ordemServicoProjection.getPagamento_id());
+    }
 
     public BigDecimal getValor() {
         return valor;
