@@ -3,7 +3,7 @@ package com.igomarcelino.gerenciamento_ordem_de_servico.entities;
 import jakarta.persistence.*;
 
 @Entity
-public class Cliente extends Pessoa{
+public class Cliente extends Pessoa {
 
     /**
      * Cria o relacionamento com a tabela endereco
@@ -15,8 +15,8 @@ public class Cliente extends Pessoa{
     public Cliente() {
     }
 
-    public Cliente(Integer id, String nome, String cpf, String telefone, String email, Endereco endereco) {
-        super(id, nome, cpf, telefone, email);
+    public Cliente(String nome, String cpf, String telefone, String email, Endereco endereco) {
+        super(nome, cpf, telefone, email);
         this.endereco = endereco;
     }
 

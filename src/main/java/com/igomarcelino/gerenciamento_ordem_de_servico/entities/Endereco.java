@@ -1,5 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.entities;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.projection.EnderecoProjection;
 import jakarta.persistence.*;
 
 @Entity
@@ -17,9 +18,19 @@ public class Endereco {
 
     public Endereco() {
     }
+    public Endereco(EnderecoProjection enderecoProjection) {
+        id = enderecoProjection.getId();
+        rua = enderecoProjection.getRua();
+        numero = enderecoProjection.getNumero();
+        complemento = enderecoProjection.getComplemento();
+        bairro = enderecoProjection.getBairro();
+        cidade = enderecoProjection.getCidade();
+        estado = enderecoProjection.getEstado();
+        CEP = enderecoProjection.getCEP();
+    }
 
-    public Endereco(Long id,  String rua, String numero, String complemento, String bairro, String cidade, String estado, Integer CEP) {
-        this.id = id;
+    public Endereco(String rua, String numero, String complemento, String bairro, String cidade, String estado, Integer CEP) {
+
         this.rua = rua;
         this.numero = numero;
         this.complemento = complemento;

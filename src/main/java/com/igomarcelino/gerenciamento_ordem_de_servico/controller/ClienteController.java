@@ -1,15 +1,18 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.controller;
 
-import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO;
+import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO.ClienteDTO;
+import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO.ClienteMinDTO;
+import com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO.ClienteUpdateDTO;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Cliente;
 import com.igomarcelino.gerenciamento_ordem_de_servico.service.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -22,14 +25,44 @@ public class ClienteController {
 
     @GetMapping
     @Operation(summary = "Clientes", description = "Lista contendo todos os clientes")
-    public List<ClienteDTO> findAll(){
-        return clienteService.findAll();
+    public ResponseEntity<List<ClienteMinDTO>> findAll(){
+        return ResponseEntity.ok().body(clienteService.findAll());
     }
 
     @GetMapping(value = "/{id}")
     @Operation(summary = "Cliente por ID", description = "Retorna um cliente por id")
-    public ClienteDTO findById(@PathVariable Integer id){
-        return clienteService.findById(id);
+    public ResponseEntity<ClienteDTO> findById(@PathVariable Integer id){
+        return ResponseEntity.ok().body(clienteService.findById(id));
+    }
+
+    @PostMapping
+    @Operation(summary = "Salvar cliente", description = "Salva um cliente")
+    public ResponseEntity<ClienteDTO> save(@RequestBody Cliente cliente, UriComponentsBuilder uriComponentsBuilder){
+        ClienteDTO clienteDTO = clienteService.save(cliente);
+        URI uri = uriComponentsBuilder.path("/cliente/{id}").buildAndExpand(clienteDTO.getId()).toUri();
+        return ResponseEntity.created(uri).body(new ClienteDTO(clienteDTO));
+    }
+
+    @DeleteMapping(value = "/{id}")
+    @Operation(summary = "Deleta pelo ID", description = "Deleta um cliente pelo id informado")
+    public ResponseEntity<Void> deleteById(@PathVariable Integer id){
+        clienteService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @PutMapping(value = "update/{id}")
+    @Operation(summary = "Atualiza Cliente" , description = "Atualiza um cliente existente")
+    public ResponseEntity<Void> updateCliente(@PathVariable Integer id, @RequestBody ClienteUpdateDTO clienteUpdateDTO){
+        clienteService.updateCliente(id,clienteUpdateDTO);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/cliente/{cpf}")
+    @Operation(summary = "Localiza por CPF", description = "Localiza um cliente pelo cpf passado")
+    public ResponseEntity<ClienteDTO> findByCPF(@PathVariable String cpf){
+        ClienteDTO clienteDTO =  clienteService.findByCPF(cpf);
+        return ResponseEntity.ok().body(clienteDTO);
     }
 
 }

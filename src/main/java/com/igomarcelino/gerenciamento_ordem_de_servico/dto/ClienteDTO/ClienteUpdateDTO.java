@@ -1,27 +1,21 @@
-package com.igomarcelino.gerenciamento_ordem_de_servico.dto;
+package com.igomarcelino.gerenciamento_ordem_de_servico.dto.ClienteDTO;
 
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Cliente;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Endereco;
-import org.springframework.beans.BeanUtils;
+/**
+ * Classe utilizada para atualizar Cliente Caso Exista
+ * */
+public class ClienteUpdateDTO {
 
-public class ClienteDTO {
-
-    private Integer id;
     private String nome;
-    private String cpf;
     private String telefone;
     private String email;
     private Endereco endereco;
 
-    public ClienteDTO() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
+    public ClienteUpdateDTO(String nome, String telefone, String email, Endereco endereco) {
+        this.nome = nome;
+        this.telefone = telefone;
+        this.email = email;
+        this.endereco = endereco;
     }
 
     public String getNome() {
@@ -30,14 +24,6 @@ public class ClienteDTO {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
     }
 
     public String getTelefone() {
@@ -62,12 +48,5 @@ public class ClienteDTO {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
-    }
-
-    /**
-     * atribui as propriedades  do cliente ao DTO
-     * */
-    public ClienteDTO (Cliente cliente){
-        BeanUtils.copyProperties(cliente,this);
     }
 }
