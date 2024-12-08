@@ -39,6 +39,7 @@ public class Pagamento {
         this.data = data;
     }
 
+
     public Pagamento(PagamentoDTO pagamentoDTO) {
         BeanUtils.copyProperties(pagamentoDTO,this);
     }
@@ -48,6 +49,7 @@ public class Pagamento {
         valor = pagamentoRequestDTO.getValor();
         data = LocalDate.now();
     }
+
 
     public Integer getId() {
         return id;

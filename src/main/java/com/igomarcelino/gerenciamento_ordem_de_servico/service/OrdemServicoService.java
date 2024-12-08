@@ -1,10 +1,14 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.service;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.FormaPagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoRequestDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoResumeDTO;
+import com.igomarcelino.gerenciamento_ordem_de_servico.dto.PagamentoDTO.PagamentoDTO;
+import com.igomarcelino.gerenciamento_ordem_de_servico.dto.PagamentoDTO.PagamentoRequestDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.OrdemServico;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Pagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Servico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.ServicoBelonging;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.DataAlreadyExistsException;
@@ -29,6 +33,8 @@ public class OrdemServicoService {
     ServicoBelongingRepository servicoBelongingRepository;
     @Autowired
     ServicoService servicoService;
+    @Autowired
+    PagamentoService pagamentoService;
 
     @Transactional
     public OrdemServicoDTO save(OrdemServicoRequestDTO ordemServicoRequestDTO,int[] id_servicos) {
@@ -80,13 +86,39 @@ public class OrdemServicoService {
         return new OrdemServicoDTO(ordemAtualizada);
     }
 
+    /**
+     * Ordens por status
+     * */
    public List<OrdemServicoRequestDTO> ordensPorStatus(StatusOrdem statusOrdem){
         return ordemServicoRepository.findByStatus(statusOrdem.name()).stream().map(OrdemServicoRequestDTO::new).toList();
     }
 
+    /**
+     * Ordens por Cliente, procura pelo cpf
+     * */
     public List<OrdemServicoResumeDTO> ordemPorCliente(String cpf){
         return ordemServicoRepository.findByCpfCliente(cpf).get().stream().map(OrdemServicoResumeDTO::new).toList();
     }
 
+    /**
+     * Realiza o pagamento da ordem
+     * */
+    public OrdemServicoDTO realizarPagamento(FormaPagamento formaPagamento, Integer id){
+        var ordemServico = ordemServicoRepository.findById(id);
+        if (!ordemServico.isEmpty()){
+            if (ordemServico.get().getStatusOrdem() == StatusOrdem.FINALIZADA){
+               var pagamento = new Pagamento();
+                pagamento.setFormaPagamento(formaPagamento);
+                pagamento.setValor(ordemServico.get().getValor());
+                var pagamentoID = pagamentoService.save(new PagamentoRequestDTO(pagamento));
+                ordemServico.get().setPagamento_id(pagamentoID.getId());
+                ordemServicoRepository.save(ordemServico.get());
+            }
+            return new OrdemServicoDTO(ordemServico.get());
+        }else {
+            throw new ObjectNotFoundException("Ordem nao localizada para pagamento");
+        }
+
+    }
 
 }

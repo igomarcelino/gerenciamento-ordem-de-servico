@@ -1,6 +1,8 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.dto.PagamentoDTO;
 
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.FormaPagamento;
+import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Pagamento;
+import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 
@@ -14,6 +16,10 @@ public class PagamentoRequestDTO {
     }
 
     public PagamentoRequestDTO() {
+    }
+
+    public PagamentoRequestDTO(Pagamento pagamento) {
+        BeanUtils.copyProperties(pagamento,this);
     }
 
     public FormaPagamento getFormaPagamento() {

@@ -1,5 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.controller;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.FormaPagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoRequestDTO;
@@ -63,5 +64,11 @@ public class OrdemServicoController {
     public ResponseEntity<List<OrdemServicoResumeDTO>> findbyCPFCliente(String cpf){
         var ordemPorCPF = ordemServicoService.ordemPorCliente(cpf);
         return ResponseEntity.ok().body(ordemPorCPF);
+    }
+
+    @PutMapping(value = "/ordemPagamento/{id}")
+    public ResponseEntity<OrdemServicoDTO> realizarPagamento(FormaPagamento formaPagamento, @PathVariable Integer id){
+        var ordemServico = ordemServicoService.realizarPagamento(formaPagamento,id);
+        return ResponseEntity.ok().body(ordemServico);
     }
 }

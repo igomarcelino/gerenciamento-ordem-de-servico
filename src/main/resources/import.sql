@@ -23,7 +23,7 @@ INSERT INTO cliente (cpf, email, nome, telefone, endereco_id) VALUES  ('90123456
 INSERT INTO cliente (cpf, email, nome, telefone, endereco_id) VALUES  ('01234567890', 'lara.dias@example.com', 'Lara Dias', '55522334455', 10);
 
 -- Seed funcionario
-INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Igo Marcelino', '99933322299', 'igo@email.com', '11988772233', 'igomarcelino', '123456')
+INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Igo Marcelino', '99933322299', 'igo@email.com', '11988772233', 'igomarcelino', '$2a$12$lwyyuJMtYpyp46Wp7C6uGuSOxUj2lz9x1ZLfJNkoOH8BHV9fUU5R2')
 INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Ana Paula', '88811144455', 'ana.paula@email.com', '11987654321', 'anapaula', '654321');
 INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Carlos Silva', '77722233344', 'carlos.silva@email.com', '11999887766', 'carlossilva', 'abcdef');
 INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Mariana Santos', '66633344455', 'mariana.santos@email.com', '11988776655', 'marianasantos', '123abc');
@@ -52,3 +52,13 @@ INSERT INTO ORDEM_SERVICO (CLIENTE_ID, FUNCIONARIO_ID, PAGAMENTO_ID, STATUS_ORDE
 INSERT INTO ORDEM_SERVICO (CLIENTE_ID, FUNCIONARIO_ID, PAGAMENTO_ID, STATUS_ORDEM)VALUES(8, 4, 0, 'ABERTA');
 INSERT INTO ORDEM_SERVICO (CLIENTE_ID, FUNCIONARIO_ID, PAGAMENTO_ID, STATUS_ORDEM)VALUES(2, 1, 0, 'ABERTA');
 INSERT INTO ORDEM_SERVICO (CLIENTE_ID, FUNCIONARIO_ID, PAGAMENTO_ID, STATUS_ORDEM)VALUES(5, 2, 0, 'ABERTA');
+
+--Seeds para tabelas roles
+
+INSERT INTO ROLES(role_name)VALUES('admin');
+INSERT INTO ROLES(role_name)VALUES('user');
+
+CREATE TABLE tb_user_role_list (role_list_id INTEGER not null unique, funcionario_id integer not null);
+alter table if exists tb_user_role_list add constraint FKk9j4uf5h926hjdwiunau41d4b foreign key (role_list_id) references roles;
+alter table if exists tb_user_role_list add constraint FK912baa732c4n3tdyjuibx2elh foreign key (funcionario_id) references funcionario;
+INSERT INTO TB_USER_ROLE_LIST(ROLE_LIST_ID, FUNCIONARIO_ID)VALUES(1,1);

@@ -6,13 +6,16 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Funcionario;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ObjectNotFoundException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.FuncionarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class FuncionarioService {
+public class FuncionarioService implements UserDetailsService {
     @Autowired
     FuncionarioRepository funcionarioRepository;
 
@@ -95,4 +98,10 @@ public class FuncionarioService {
 
     }
 
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        var funcionario = funcionarioRepository.findByUsuarioLogin(username);
+        return funcionario;
+    }
 }
