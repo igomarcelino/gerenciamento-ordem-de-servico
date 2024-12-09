@@ -1,6 +1,7 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.projection;
 
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
+import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusPagamento;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
@@ -20,6 +21,8 @@ public interface OrdemServicoProjection {
     BigDecimal getValor();
 
     StatusOrdem getStatusOrdem();
+
+    StatusPagamento getStatusPagamento();
 
     LocalDate getVencimento();
 }

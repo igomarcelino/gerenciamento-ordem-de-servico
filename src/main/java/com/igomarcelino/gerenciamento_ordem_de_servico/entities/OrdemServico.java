@@ -1,6 +1,7 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.entities;
 
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
+import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusPagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoRequestDTO;
 import jakarta.persistence.*;
@@ -22,6 +23,9 @@ public class OrdemServico {
     @Enumerated(EnumType.STRING)
     private StatusOrdem statusOrdem;
     private LocalDate vencimento;
+
+    @Enumerated(EnumType.STRING)
+    private StatusPagamento statusPagamento;
 
     public OrdemServico() {
     }
@@ -50,6 +54,7 @@ public class OrdemServico {
         cliente_id = ordemServicoRequestDTO.getCliente_id();
         pagamento_id = 0;
         statusOrdem = StatusOrdem.ABERTA;
+        statusPagamento = StatusPagamento.NAO_PAGO;
 
     }
 
@@ -60,6 +65,17 @@ public class OrdemServico {
         return ordemServico;
     }
 
+    public OrdemServico(Integer id, Integer funcionario_id, Integer cliente_id, Integer pagamento_id, BigDecimal valor, StatusOrdem statusOrdem, LocalDate vencimento, StatusPagamento statusPagamento) {
+        this.id = id;
+        this.funcionario_id = funcionario_id;
+        this.cliente_id = cliente_id;
+        this.pagamento_id = pagamento_id;
+        this.valor = valor;
+        this.statusOrdem = statusOrdem;
+        this.vencimento = vencimento;
+        this.statusPagamento = statusPagamento;
+    }
+
 
 
     public OrdemServico(OrdemServicoDTO ordemServicoDTO) {
@@ -68,6 +84,14 @@ public class OrdemServico {
 
     public LocalDate getVencimento() {
         return vencimento;
+    }
+
+    public StatusPagamento getStatusPagamento() {
+        return statusPagamento;
+    }
+
+    public void setStatusPagamento(StatusPagamento statusPagamento) {
+        this.statusPagamento = statusPagamento;
     }
 
     public void setVencimento(LocalDate vencimento) {

@@ -37,11 +37,11 @@ public class OrdemServicoService {
     PagamentoService pagamentoService;
 
     @Transactional
-    public OrdemServicoDTO save(OrdemServicoRequestDTO ordemServicoRequestDTO,int[] id_servicos) {
+    public OrdemServicoDTO save(OrdemServicoRequestDTO ordemServicoRequestDTO, int[] id_servicos) {
         var ordemServico = new OrdemServico(ordemServicoRequestDTO);
         List<Servico> servicoList = new ArrayList<>();
         BigDecimal valor = BigDecimal.ZERO;
-        for (Integer i : id_servicos){
+        for (Integer i : id_servicos) {
             var servicoDTO = servicoService.findById(i);
             Servico servico = Servico.fromDto(servicoDTO);
             servicoList.add(servico);
@@ -50,7 +50,7 @@ public class OrdemServicoService {
         ordemServico.setValor(valor);
         var ordemToSave = ordemServicoRepository.save(ordemServico);
 
-        List<ServicoBelonging> servicoBelongingList = servicoList.stream().map(servico -> new ServicoBelonging(servico,ordemToSave)).toList();
+        List<ServicoBelonging> servicoBelongingList = servicoList.stream().map(servico -> new ServicoBelonging(servico, ordemToSave)).toList();
         servicoBelongingRepository.saveAll(servicoBelongingList);
         return new OrdemServicoDTO(ordemToSave);
     }
@@ -61,20 +61,21 @@ public class OrdemServicoService {
                 map(OrdemServicoDTO::new).
                 toList();
     }
+
     /**
      * Localizar pelo ID
-     * */
+     */
     public OrdemServicoDTO findById(Integer id) {
         return ordemServicoRepository.findById(id).map(OrdemServicoDTO::new).get();
     }
 
     /**
      * Finalizar Ordem de servico
-     * */
-    public OrdemServicoDTO finalizarOrdem(Integer id, StatusOrdem statusOrdem){
+     */
+    public OrdemServicoDTO finalizarOrdem(Integer id, StatusOrdem statusOrdem) {
         var ordemServico = ordemServicoRepository.findById(id);
         var ordemAtualizada = new OrdemServico();
-        if (ordemServico.get().getStatusOrdem() == StatusOrdem.FINALIZADA){
+        if (ordemServico.get().getStatusOrdem() == StatusOrdem.FINALIZADA) {
             throw new DataAlreadyExistsException("A ordem com o id %d ja se encontra finalizada", id);
         } else if (!ordemServico.isEmpty()) {
             ordemServico.get().setStatusOrdem(statusOrdem);
@@ -88,26 +89,36 @@ public class OrdemServicoService {
 
     /**
      * Ordens por status
-     * */
-   public List<OrdemServicoRequestDTO> ordensPorStatus(StatusOrdem statusOrdem){
-        return ordemServicoRepository.findByStatus(statusOrdem.name()).stream().map(OrdemServicoRequestDTO::new).toList();
+     */
+    public List<OrdemServicoRequestDTO> ordensPorStatus(StatusOrdem statusOrdem) {
+        var ordemPorStatus = ordemServicoRepository.findByStatus(statusOrdem.name()).stream().map(OrdemServicoRequestDTO::new).toList();
+        if (ordemPorStatus.size() != 0){
+            return ordemPorStatus;
+        }else {
+            throw new ObjectNotFoundException("Nao possuem ordem com o status %s para listagem.",statusOrdem.name().replace("_"," "));
+        }
     }
 
     /**
      * Ordens por Cliente, procura pelo cpf
-     * */
-    public List<OrdemServicoResumeDTO> ordemPorCliente(String cpf){
-        return ordemServicoRepository.findByCpfCliente(cpf).get().stream().map(OrdemServicoResumeDTO::new).toList();
+     */
+    public List<OrdemServicoResumeDTO> ordemPorCliente(String cpf) {
+        var ordensPorCliente = ordemServicoRepository.findByCpfCliente(cpf).get().stream().map(OrdemServicoResumeDTO::new).toList();
+        if (ordensPorCliente.size() != 0) {
+            return ordensPorCliente;
+        } else {
+            throw new ObjectNotFoundException("O cpf: %s nao possui ordens de servico.", cpf);
+        }
     }
 
     /**
      * Realiza o pagamento da ordem
-     * */
-    public OrdemServicoDTO realizarPagamento(FormaPagamento formaPagamento, Integer id){
+     */
+    public OrdemServicoDTO realizarPagamento(FormaPagamento formaPagamento, Integer id) {
         var ordemServico = ordemServicoRepository.findById(id);
-        if (!ordemServico.isEmpty()){
-            if (ordemServico.get().getStatusOrdem() == StatusOrdem.FINALIZADA){
-               var pagamento = new Pagamento();
+        if (!ordemServico.isEmpty()) {
+            if (ordemServico.get().getStatusOrdem() == StatusOrdem.FINALIZADA) {
+                var pagamento = new Pagamento();
                 pagamento.setFormaPagamento(formaPagamento);
                 pagamento.setValor(ordemServico.get().getValor());
                 var pagamentoID = pagamentoService.save(new PagamentoRequestDTO(pagamento));
@@ -115,7 +126,7 @@ public class OrdemServicoService {
                 ordemServicoRepository.save(ordemServico.get());
             }
             return new OrdemServicoDTO(ordemServico.get());
-        }else {
+        } else {
             throw new ObjectNotFoundException("Ordem nao localizada para pagamento");
         }
 

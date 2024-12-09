@@ -1,6 +1,7 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO;
 
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
+import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusPagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.OrdemServico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.projection.OrdemServicoProjection;
 import org.springframework.beans.BeanUtils;
@@ -17,6 +18,7 @@ public class OrdemServicoDTO {
     private StatusOrdem statusOrdem;
     private BigDecimal valor;
     private LocalDate vencimento;
+    private StatusPagamento statusPagamento;
 
     public OrdemServicoDTO(OrdemServicoProjection ordemServicoProjection) {
          setId(ordemServicoProjection.getId());
@@ -24,6 +26,7 @@ public class OrdemServicoDTO {
          setValor(ordemServicoProjection.getValor());
          setVencimento(ordemServicoProjection.getVencimento());
          setPagamento_id(ordemServicoProjection.getPagamento_id());
+         setStatusPagamento(ordemServicoProjection.getStatusPagamento());
     }
 
     public BigDecimal getValor() {
@@ -34,15 +37,24 @@ public class OrdemServicoDTO {
         this.valor = valor;
     }
 
+    public StatusPagamento getStatusPagamento() {
+        return statusPagamento;
+    }
+
+    public void setStatusPagamento(StatusPagamento statusPagamento) {
+        this.statusPagamento = statusPagamento;
+    }
+
     public OrdemServicoDTO() {
     }
 
-    public OrdemServicoDTO(Integer id, Integer funcionario_id, Integer cliente_id, Integer pagamento_id, StatusOrdem statusOrdem) {
+    public OrdemServicoDTO(Integer id, Integer funcionario_id, Integer cliente_id, Integer pagamento_id, StatusOrdem statusOrdem,StatusPagamento statusPagamento) {
         this.id = id;
         this.funcionario_id = funcionario_id;
         this.cliente_id = cliente_id;
         this.pagamento_id = pagamento_id;
         this.statusOrdem = statusOrdem;
+        this.statusPagamento = statusPagamento;
         valor = null;
 
     }
@@ -56,6 +68,7 @@ public class OrdemServicoDTO {
         cliente_id = ordemServicoRequestDTO.getCliente_id();
         pagamento_id = 0;
         statusOrdem = StatusOrdem.ABERTA;
+        statusPagamento = StatusPagamento.NAO_PAGO;
 
 
     }
