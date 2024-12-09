@@ -8,32 +8,28 @@ import java.util.Random;
 
 public class OrdemAprovacaoClienteDTO {
 
-    private Integer id;
     private String ordemLogin;
     private String ordemSenha;
-    private AutorizarOrdemServico autorizarOrdemServico;
+
 
     public OrdemAprovacaoClienteDTO() {
     }
 
-    public OrdemAprovacaoClienteDTO(OrdemServico ordemServico) {
-        this.id = ordemServico.getId();
-        ordemLogin = ordemServico.getOrdemLogin() ;
-        ordemSenha = ordemServico.getOrdemSenha();
-        this.autorizarOrdemServico = ordemServico.getAutorizarOrdemServico();
+    public String getOrdemLogin() {
+        return ordemLogin;
     }
 
-    public String gerarOsId(OrdemServicoDTO ordemServicoDTO){
-        LocalDate data = LocalDate.now();
-        String dataOrdem = String.valueOf(data);
-        String clienteId = String.valueOf(ordemServicoDTO.getCliente_id());
-        String ordemId = String.valueOf(ordemServicoDTO.getId());
-
-        return new StringBuilder(dataOrdem+clienteId+ordemId).toString();
+    public void setOrdemLogin(String ordemLogin) {
+        this.ordemLogin = ordemLogin;
     }
 
-    public String gerarSenha(){
-        int  senha = new Random().nextInt(10000);
-         return new StringBuilder(senha).toString();
+    public String getOrdemSenha() {
+        return ordemSenha;
     }
+
+    public void setOrdemSenha(String ordemSenha) {
+        this.ordemSenha = ordemSenha;
+    }
+
+
 }

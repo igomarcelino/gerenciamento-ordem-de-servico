@@ -36,6 +36,9 @@ public class OrdemServicoDTO {
          setVencimento(ordemServicoProjection.getVencimento());
          setPagamento_id(ordemServicoProjection.getPagamento_id());
          setStatusPagamento(ordemServicoProjection.getStatusPagamento());
+         setOrdemLogin(ordemServicoProjection.getOrdemLogin());
+         setOrdemSenha(ordemServicoProjection.getOrdemSenha());
+         setAutorizarOrdemServico(ordemServicoProjection.getAutorizarOrdemServico());
     }
 
     public BigDecimal getValor() {

@@ -1,11 +1,12 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.controller;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.AutorizarOrdemServico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.FormaPagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
+import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemAprovacaoClienteDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoRequestDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoResumeDTO;
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Servico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.service.OrdemServicoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -66,9 +66,24 @@ public class OrdemServicoController {
         return ResponseEntity.ok().body(ordemPorCPF);
     }
 
+    //TODO Descrever as funcionalidades desses metodos
     @PutMapping(value = "/ordemPagamento/{id}")
     public ResponseEntity<OrdemServicoDTO> realizarPagamento(FormaPagamento formaPagamento, @PathVariable Integer id){
         var ordemServico = ordemServicoService.realizarPagamento(formaPagamento,id);
         return ResponseEntity.ok().body(ordemServico);
     }
+
+    @PutMapping(value = "/ordemLogin/autorizar")
+    public ResponseEntity<OrdemServicoDTO> autorizarOrdem(OrdemAprovacaoClienteDTO aprovacaoClienteDTO, AutorizarOrdemServico autorizarOrdemServico){
+        var ordemServico = ordemServicoService.autorizarOrdem(aprovacaoClienteDTO.getOrdemLogin(), aprovacaoClienteDTO.getOrdemSenha(), autorizarOrdemServico);
+        return ResponseEntity.ok().body(ordemServico);
+    }
+
+    //TODO verificar esse DTO para realizar uma melhoria no retorno dele
+    @GetMapping(value = "/ordemLogin/acompanhar")
+    public ResponseEntity<OrdemServicoDTO> acompanharOrdem(OrdemAprovacaoClienteDTO ordemAprovacaoClienteDTO){
+        var ordemServico = ordemServicoService.acompanharStatusOrdem(ordemAprovacaoClienteDTO.getOrdemLogin(), ordemAprovacaoClienteDTO.getOrdemSenha());
+        return ResponseEntity.ok().body(ordemServico);
+    }
+
 }

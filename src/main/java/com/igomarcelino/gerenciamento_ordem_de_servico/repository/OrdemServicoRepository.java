@@ -27,5 +27,12 @@ public interface OrdemServicoRepository extends JpaRepository<OrdemServico, Inte
             """)
     Optional<List<OrdemServicoProjection>> findByCpfCliente(String cpf);
 
+    @Query(nativeQuery = true,value = """
+            SELECT *FROM ORDEM_SERVICO OS
+            WHERE OS.ORDEM_LOGIN = :ordemLogin
+            AND OS.ORDEM_SENHA = :ordemSenha
+            """)
+    Optional<OrdemServicoProjection> findByOrdemLogin(String ordemLogin, String ordemSenha);
+
 
 }

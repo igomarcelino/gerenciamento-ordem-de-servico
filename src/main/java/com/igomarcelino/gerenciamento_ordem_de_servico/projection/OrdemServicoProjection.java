@@ -1,5 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.projection;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.AutorizarOrdemServico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusPagamento;
 import jakarta.persistence.EnumType;
@@ -25,4 +26,8 @@ public interface OrdemServicoProjection {
     StatusPagamento getStatusPagamento();
 
     LocalDate getVencimento();
+    String getOrdemLogin();
+    String getOrdemSenha();
+    AutorizarOrdemServico getAutorizarOrdemServico();
+
 }

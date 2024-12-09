@@ -4,7 +4,6 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.AutorizarOrdemServic
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.FormaPagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusPagamento;
-import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemAprovacaoClienteDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoRequestDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoResumeDTO;
@@ -24,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrdemServicoService {
@@ -80,7 +80,7 @@ public class OrdemServicoService {
     public OrdemServicoDTO finalizarOrdem(Integer id, StatusOrdem statusOrdem) {
         var ordemServico = ordemServicoRepository.findById(id);
         var ordemAtualizada = new OrdemServico();
-        if (ordemServico.get().getStatusOrdem() == StatusOrdem.APROVADA_PELO_CLIENTE){
+
             if (ordemServico.get().getStatusOrdem() == StatusOrdem.FINALIZADA) {
                 throw new DataAlreadyExistsException("A ordem com o id %d ja se encontra finalizada", id);
             } else if (!ordemServico.isEmpty()) {
@@ -91,9 +91,6 @@ public class OrdemServicoService {
                 throw new ObjectNotFoundException("A Ordem de numero: %d nao foi localizada!", id);
             }
             return new OrdemServicoDTO(ordemAtualizada);
-        }else {
-            throw new ObjectNotFoundException("A ordem de servico de numero %d nao foi aprovada pelo cliente", id);
-        }
     }
 
     /**
@@ -123,6 +120,7 @@ public class OrdemServicoService {
     /**
      * Realiza o pagamento da ordem
      */
+    //TODO - melhorar a logica para finalizar o pagamento, e melhorar o retorno dessa ordem com campos null
     public OrdemServicoDTO realizarPagamento(FormaPagamento formaPagamento, Integer id) {
         var ordemServico = ordemServicoRepository.findById(id);
         if (!ordemServico.isEmpty()) {
@@ -144,10 +142,36 @@ public class OrdemServicoService {
     }
 
 
-   /* public OrdemAprovacaoClienteDTO acompanharOrdem(String ordemLogin, String ordemSenha , AutorizarOrdemServico autorizarOrdemServico){
+    public OrdemServicoDTO autorizarOrdem(String ordemLogin, String ordemSenha , AutorizarOrdemServico autorizarOrdemServico){
 
+        Optional<OrdemServicoDTO> ordemServico =  ordemServicoRepository.findByOrdemLogin(ordemLogin, ordemSenha).
+                stream().
+                map(OrdemServicoDTO::new).findAny();
 
-    } */
+        if (!ordemServico.isEmpty()){
+            var autorizacao = autorizarOrdemServico.name();
+            if (autorizacao.equalsIgnoreCase(AutorizarOrdemServico.APROVAR.name())){
+                ordemServico.get().setStatusOrdem(StatusOrdem.APROVADA_PELO_CLIENTE);
+            } else if (autorizacao.equalsIgnoreCase(AutorizarOrdemServico.REPROVAR.name())) {
+                ordemServico.get().setStatusOrdem(StatusOrdem.ORCAMENTO_REPROVADO);
+                var ordemToUpdate = new OrdemServico(ordemServico.get());
+                ordemServicoRepository.save(ordemToUpdate);
+            }
+            return ordemServico.get();
+        }else {
+            throw new ObjectNotFoundException("A ordem de servico %s nao foi localizada",ordemLogin);
+        }
+
+    }
+
+    public OrdemServicoDTO acompanharStatusOrdem(String ordemLogin, String ordemSenha){
+        return ordemServicoRepository.findByOrdemLogin(ordemLogin,ordemSenha).
+                stream().
+                map(OrdemServicoDTO::new).
+                findAny().
+                orElseThrow(() -> new ObjectNotFoundException("A ordem com o login %s nao foi localizada." , ordemLogin));
+    }
+
 
 
 }
