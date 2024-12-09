@@ -26,4 +26,6 @@ public interface OrdemServicoRepository extends JpaRepository<OrdemServico, Inte
                        WHERE C.CPF = :cpf;
             """)
     Optional<List<OrdemServicoProjection>> findByCpfCliente(String cpf);
+
+
 }

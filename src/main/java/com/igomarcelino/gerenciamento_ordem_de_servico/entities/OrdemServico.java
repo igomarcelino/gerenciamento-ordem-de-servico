@@ -1,5 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.entities;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.AutorizarOrdemServico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusPagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
@@ -9,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Random;
 
 @Entity
 public class OrdemServico {
@@ -26,6 +28,12 @@ public class OrdemServico {
 
     @Enumerated(EnumType.STRING)
     private StatusPagamento statusPagamento;
+
+    private String ordemLogin;
+    private String ordemSenha;
+
+    @Enumerated(EnumType.STRING)
+    private AutorizarOrdemServico autorizarOrdemServico;
 
     public OrdemServico() {
     }
@@ -54,7 +62,10 @@ public class OrdemServico {
         cliente_id = ordemServicoRequestDTO.getCliente_id();
         pagamento_id = 0;
         statusOrdem = StatusOrdem.ABERTA;
-        statusPagamento = StatusPagamento.NAO_PAGO;
+        statusPagamento = StatusPagamento.NAO_PAGO  ;
+        ordemLogin = gerarOsLogin(ordemServicoRequestDTO);
+        ordemSenha = gerarOsSenha(ordemLogin);
+        autorizarOrdemServico = AutorizarOrdemServico.NULL;
 
     }
 
@@ -138,6 +149,31 @@ public class OrdemServico {
         this.statusOrdem = statusOrdem;
     }
 
+    public String getOrdemLogin() {
+        return ordemLogin;
+    }
+
+    public void setOrdemLogin(String ordemLogin) {
+        this.ordemLogin = ordemLogin;
+    }
+
+    public String getOrdemSenha() {
+        return ordemSenha;
+    }
+
+    public void setOrdemSenha(String ordemSenha) {
+        this.ordemSenha = ordemSenha;
+    }
+
+    public AutorizarOrdemServico getAutorizarOrdemServico() {
+        return autorizarOrdemServico;
+    }
+
+    public void setAutorizarOrdemServico(AutorizarOrdemServico autorizarOrdemServico) {
+        this.autorizarOrdemServico = autorizarOrdemServico;
+    }
+
+    // Equals and Hash
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -149,5 +185,25 @@ public class OrdemServico {
     @Override
     public int hashCode() {
         return getId() != null ? getId().hashCode() : 0;
+    }
+
+    /**
+     * Gera login para o cliente acompanhar a ordem de servico
+     * */
+    public String gerarOsLogin(OrdemServicoRequestDTO ordemServicoRequestDTO){
+        LocalDate dataNow = LocalDate.now();
+        String data = String.valueOf(dataNow).replace("-","");
+        String clienteId = String.valueOf(ordemServicoRequestDTO.getCliente_id());
+        String ordemLogin = String.valueOf(new Random(1).nextInt(100));
+        return String.valueOf(data+clienteId+ordemLogin);
+    }
+
+    /**
+     * Gera senha para o cliente acompanhar a ordem de servico
+     * */
+    public String gerarOsSenha(String login){
+        long senha = Long.parseLong(login);
+        double newSenha = Math.cos(senha);
+        return  String.valueOf(newSenha).substring(3,7);
     }
 }

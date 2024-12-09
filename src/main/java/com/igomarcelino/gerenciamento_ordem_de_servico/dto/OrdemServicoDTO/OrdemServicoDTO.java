@@ -1,9 +1,12 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.AutorizarOrdemServico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusPagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.OrdemServico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.projection.OrdemServicoProjection;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
@@ -19,6 +22,12 @@ public class OrdemServicoDTO {
     private BigDecimal valor;
     private LocalDate vencimento;
     private StatusPagamento statusPagamento;
+
+    private String ordemLogin;
+    private String ordemSenha;
+
+    private AutorizarOrdemServico autorizarOrdemServico;
+
 
     public OrdemServicoDTO(OrdemServicoProjection ordemServicoProjection) {
          setId(ordemServicoProjection.getId());
@@ -71,6 +80,7 @@ public class OrdemServicoDTO {
         statusPagamento = StatusPagamento.NAO_PAGO;
 
 
+
     }
     public LocalDate getVencimento() {
         return vencimento;
@@ -120,4 +130,27 @@ public class OrdemServicoDTO {
         this.statusOrdem = statusOrdem;
     }
 
+    public String getOrdemLogin() {
+        return ordemLogin;
+    }
+
+    public void setOrdemLogin(String ordemLogin) {
+        this.ordemLogin = ordemLogin;
+    }
+
+    public String getOrdemSenha() {
+        return ordemSenha;
+    }
+
+    public void setOrdemSenha(String ordemSenha) {
+        this.ordemSenha = ordemSenha;
+    }
+
+    public AutorizarOrdemServico getAutorizarOrdemServico() {
+        return autorizarOrdemServico;
+    }
+
+    public void setAutorizarOrdemServico(AutorizarOrdemServico autorizarOrdemServico) {
+        this.autorizarOrdemServico = autorizarOrdemServico;
+    }
 }
