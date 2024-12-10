@@ -33,6 +33,9 @@ Uma empresa de manutenção deseja um sistema para organizar e controlar suas at
 - Trabalhando na seguranca da API. No momento estou me aprofundando em Spring Security para habilitar a seguranca da API
 - Trabalhando no front . Estou tambem estudando Angular.js para que possa criar o front-end dessa aplicacao
 
+## Link para visualizacao da API
+[API no Railway com Swagger](gerenciamento-ordem-de-servico-production.up.railway.app)
+
 # LOGIN PARA UTILIZACAO
 - usuario : igomarcelino
 - senha : 123456
