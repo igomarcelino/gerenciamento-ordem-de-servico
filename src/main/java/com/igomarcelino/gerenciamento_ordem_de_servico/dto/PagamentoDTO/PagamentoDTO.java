@@ -31,6 +31,9 @@ public class PagamentoDTO {
         data = LocalDate.now();
     }
 
+    public static PagamentoDTO PagamentoToDTO(Pagamento pagamento){
+        return new PagamentoDTO(pagamento);
+    }
     public PagamentoDTO(Pagamento pagamento){
         BeanUtils.copyProperties(pagamento,this);
     }

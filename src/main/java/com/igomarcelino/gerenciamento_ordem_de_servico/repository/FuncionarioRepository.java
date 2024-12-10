@@ -14,4 +14,6 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Intege
             WHERE CPF = :cpf;
             """)
     Optional<FuncionarioProjection> findByCPF(String cpf);
+
+    Funcionario findByUsuarioLogin(String usuario);
 }

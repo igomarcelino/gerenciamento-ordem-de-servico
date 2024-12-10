@@ -1,6 +1,7 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO;
 
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
+import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusPagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.projection.OrdemServicoProjection;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,6 +14,7 @@ public class OrdemServicoRequestDTO {
     private Integer cliente_id;
 
     private StatusOrdem statusOrdem;
+    private StatusPagamento statusPagamento;
 
     public OrdemServicoRequestDTO() {
     }
@@ -26,12 +28,22 @@ public class OrdemServicoRequestDTO {
         funcionario_id = ordemServicoProjection.getFuncionario_id();
         cliente_id = ordemServicoProjection.getCliente_id();
         statusOrdem = ordemServicoProjection.getStatusOrdem();
+        statusPagamento = ordemServicoProjection.getStatusPagamento();
+
 
     }
 
 
     public StatusOrdem getStatusOrdem() {
         return statusOrdem;
+    }
+
+    public StatusPagamento getStatusPagamento() {
+        return statusPagamento;
+    }
+
+    public void setStatusPagamento(StatusPagamento statusPagamento) {
+        this.statusPagamento = statusPagamento;
     }
 
     public void setStatusOrdem(StatusOrdem statusOrdem) {

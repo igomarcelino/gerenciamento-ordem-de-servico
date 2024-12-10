@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class ClienteService {
 
+
     @Autowired
     ClienteRepository clienteRepository;
     @Autowired
@@ -116,7 +117,10 @@ public class ClienteService {
             clienteDTO.get().setEndereco(endereco);
         }
         return clienteDTO.orElseThrow(()-> new ObjectNotFoundException("CPF: %s nao localizado", cpf));
-
     }
+
+    /**
+     * Metodo para que o cliente possa aprovar a ordem de servico
+     * */
 
 }
