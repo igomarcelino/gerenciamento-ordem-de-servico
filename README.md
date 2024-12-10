@@ -20,8 +20,9 @@ Uma empresa de manutenção deseja um sistema para organizar e controlar suas at
 
 ## Tecnologias utilizadas
 
-- Java
-- Spring
+- Java 17
+- Spring 3.3.6
+- Swagger
 
 ## O que contem no projeto
 
