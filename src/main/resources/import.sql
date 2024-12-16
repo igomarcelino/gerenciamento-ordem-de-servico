@@ -25,7 +25,7 @@ INSERT INTO cliente (cpf, email, nome, telefone, endereco_id) VALUES  ('01234567
 -- Seed funcionario
 INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Igo Marcelino', '99933322299', 'igo@email.com', '11988772233', 'igomarcelino', '$2a$12$lwyyuJMtYpyp46Wp7C6uGuSOxUj2lz9x1ZLfJNkoOH8BHV9fUU5R2')
 INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Ana Paula', '88811144455', 'ana.paula@email.com', '11987654321', 'anapaula', '$2a$12$PJTmER4mqVwToVyw.kWBNuuC4WX.sKRytJd4xwJGlJ1c4f7a.hQ5i');
-INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Carlos Silva', '77722233344', 'carlos.silva@email.com', '11999887766', 'carlossilva', 'abcdef');
+INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Carlos Silva', '77722233344', 'carlos.silva@email.com', '11999887766', 'carlossilva', '$2a$12$yRBq44ueyGUnt9oTClWej.orsaTSo3cW07oV7e.o2a2jt8xSk2W4S');
 INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Mariana Santos', '66633344455', 'mariana.santos@email.com', '11988776655', 'marianasantos', '123abc');
 INSERT INTO funcionario(nome, cpf, email, telefone, usuario_login, senha_login) VALUES ('Ricardo Pereira', '55544466677', 'ricardo.pereira@email.com', '11977665544', 'ricardopereira', 'pass123');
 
@@ -61,8 +61,8 @@ INSERT INTO ROLES(role_name)VALUES('admin');
 INSERT INTO ROLES(role_name)VALUES('user');
 INSERT INTO ROLES(role_name)VALUES('customer')
 
-CREATE TABLE tb_user_role_list (role_list_id INTEGER not null unique, funcionario_id integer not null);
-alter table if exists tb_user_role_list add constraint FKk9j4uf5h926hjdwiunau41d4b foreign key (role_list_id) references roles;
-alter table if exists tb_user_role_list add constraint FK912baa732c4n3tdyjuibx2elh foreign key (funcionario_id) references funcionario;
+
+
 INSERT INTO FUNCIONARIO_ROLES_LIST VALUES(1,1);
 INSERT INTO FUNCIONARIO_ROLES_LIST VALUES(2,2);
+INSERT INTO FUNCIONARIO_ROLES_LIST VALUES(3,2);
