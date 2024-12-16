@@ -12,10 +12,12 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.entities.OrdemServico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Pagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Servico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.ServicoBelonging;
+import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.BadReqException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.DataAlreadyExistsException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ObjectNotFoundException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.OrdemServicoRepository;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.ServicoBelongingRepository;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +41,7 @@ public class OrdemServicoService {
 
     /**
      * Gerar ordem de servico
-     * */
+     */
     @Transactional
     public OrdemServicoDTO save(OrdemServicoRequestDTO ordemServicoRequestDTO, int[] id_servicos) {
         var ordemServico = new OrdemServico(ordemServicoRequestDTO);
@@ -60,6 +62,7 @@ public class OrdemServicoService {
         return new OrdemServicoDTO(ordemToSave);
     }
 
+    @Transactional(readOnly = true)
     public List<OrdemServicoDTO> findAll() {
         return ordemServicoRepository.findAll().
                 stream().
@@ -70,6 +73,7 @@ public class OrdemServicoService {
     /**
      * Localizar pelo ID
      */
+    @Transactional(readOnly = true)
     public OrdemServicoDTO findById(Integer id) {
         return ordemServicoRepository.findById(id).map(OrdemServicoDTO::new).get();
     }
@@ -77,101 +81,101 @@ public class OrdemServicoService {
     /**
      * Finalizar Ordem de servico
      */
+    @Transactional
     public OrdemServicoDTO finalizarOrdem(Integer id, StatusOrdem statusOrdem) {
-        var ordemServico = ordemServicoRepository.findById(id);
+        var ordemServico = ordemServicoRepository.findById(id).
+                orElseThrow(() -> new ObjectNotFoundException("Ordem %d nao localizada", id));
         var ordemAtualizada = new OrdemServico();
 
-            if (ordemServico.get().getStatusOrdem() == StatusOrdem.FINALIZADA) {
-                throw new DataAlreadyExistsException("A ordem com o id %d ja se encontra finalizada", id);
-            } else if (!ordemServico.isEmpty()) {
-                ordemServico.get().setStatusOrdem(statusOrdem);
-                ordemAtualizada = OrdemServico.verificaStatusOrdem(ordemServico.get());
-                ordemServicoRepository.save(ordemAtualizada);
-            } else {
-                throw new ObjectNotFoundException("A Ordem de numero: %d nao foi localizada!", id);
-            }
-            return new OrdemServicoDTO(ordemAtualizada);
+        if (ordemServico.getStatusOrdem() == StatusOrdem.FINALIZADA) {
+            throw new DataAlreadyExistsException("A ordem com o id %d ja se encontra finalizada", id);
+        }
+        if (ordemServico.getStatusOrdem() != StatusOrdem.APROVADA_PELO_CLIENTE) {
+            throw new BadReqException("Ordem %d nao aprovada pelo cliente", id);
+        }
+        ordemServico.setStatusOrdem(statusOrdem);
+        ordemAtualizada = OrdemServico.verificaStatusOrdem(ordemServico);
+        ordemServicoRepository.save(ordemAtualizada);
+
+
+        return new OrdemServicoDTO(ordemAtualizada);
     }
 
     /**
      * Ordens por status
      */
+    @Transactional(readOnly = true)
     public List<OrdemServicoRequestDTO> ordensPorStatus(StatusOrdem statusOrdem) {
-        var ordemPorStatus = ordemServicoRepository.findByStatus(statusOrdem.name()).stream().map(OrdemServicoRequestDTO::new).toList();
-        if (ordemPorStatus.size() != 0){
-            return ordemPorStatus;
-        }else {
-            throw new ObjectNotFoundException("Nao possuem ordem com o status %s para listagem.",statusOrdem.name().replace("_"," "));
-        }
+        var ordemPorStatus = ordemServicoRepository.findByStatus(statusOrdem.name()).
+                orElseThrow(()-> new ObjectNotFoundException("Status %s nao possui ordens", statusOrdem.name().replace("_", " ")));
+
+        return ordemPorStatus.stream().map(OrdemServicoRequestDTO::new).toList();
     }
 
     /**
      * Ordens por Cliente, procura pelo cpf
      */
+    @Transactional(readOnly = true)
     public List<OrdemServicoResumeDTO> ordemPorCliente(String cpf) {
-        var ordensPorCliente = ordemServicoRepository.findByCpfCliente(cpf).get().stream().map(OrdemServicoResumeDTO::new).toList();
-        if (ordensPorCliente.size() != 0) {
-            return ordensPorCliente;
-        } else {
-            throw new ObjectNotFoundException("O cpf: %s nao possui ordens de servico.", cpf);
-        }
+        var ordensPorCliente = ordemServicoRepository.findByCpfCliente(cpf).orElseThrow(()-> new ObjectNotFoundException("Nao possui ordens em aberto"));
+
+            return ordensPorCliente.stream().map(OrdemServicoResumeDTO::new).toList();
+
     }
 
     /**
      * Realiza o pagamento da ordem
      */
     //TODO - melhorar a logica para finalizar o pagamento, e melhorar o retorno dessa ordem com campos null
+    @Transactional
     public OrdemServicoDTO realizarPagamento(FormaPagamento formaPagamento, Integer id) {
-        var ordemServico = ordemServicoRepository.findById(id);
-        if (!ordemServico.isEmpty()) {
-            if (ordemServico.get().getStatusOrdem() == StatusOrdem.FINALIZADA) {
-                var pagamento = new Pagamento();
-                pagamento.setFormaPagamento(formaPagamento);
-                pagamento.setValor(ordemServico.get().getValor());
-                var pagamentoID = pagamentoService.save(new PagamentoRequestDTO(pagamento));
-                ordemServico.get().setPagamento_id(pagamentoID.getId());
-                ordemServico.get().setStatusPagamento(StatusPagamento.PAGO);
-                ordemServicoRepository.save(ordemServico.get());
-            }else {
-                throw new ObjectNotFoundException("A ordem com o id %d nao esta Finalizada.", id);
-            }
-            return new OrdemServicoDTO(ordemServico.get());
-        } else {
-            throw new ObjectNotFoundException("Ordem nao localizada para pagamento");
-        }
-    }
+        var ordemServico = ordemServicoRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Ordem %d nao localizada", id));
 
-
-    public OrdemServicoDTO autorizarOrdem(String ordemLogin, String ordemSenha , AutorizarOrdemServico autorizarOrdemServico){
-
-        Optional<OrdemServicoDTO> ordemServico =  ordemServicoRepository.findByOrdemLogin(ordemLogin, ordemSenha).
-                stream().
-                map(OrdemServicoDTO::new).findAny();
-
-        if (!ordemServico.isEmpty()){
-            var autorizacao = autorizarOrdemServico.name();
-            if (autorizacao.equalsIgnoreCase(AutorizarOrdemServico.APROVAR.name())){
-                ordemServico.get().setStatusOrdem(StatusOrdem.APROVADA_PELO_CLIENTE);
-            } else if (autorizacao.equalsIgnoreCase(AutorizarOrdemServico.REPROVAR.name())) {
-                ordemServico.get().setStatusOrdem(StatusOrdem.ORCAMENTO_REPROVADO);
-                var ordemToUpdate = new OrdemServico(ordemServico.get());
-                ordemServicoRepository.save(ordemToUpdate);
-            }
-            return ordemServico.get();
-        }else {
-            throw new ObjectNotFoundException("A ordem de servico %s nao foi localizada",ordemLogin);
+        if (ordemServico.getStatusOrdem() != StatusOrdem.FINALIZADA) {
+            throw new BadReqException("Ordem %d nao esta finalizada", id);
         }
 
+        var pagamento = new Pagamento();
+        pagamento.setFormaPagamento(formaPagamento);
+        pagamento.setValor(ordemServico.getValor());
+        var pagamentoID = pagamentoService.save(new PagamentoRequestDTO(pagamento));
+        ordemServico.setPagamento_id(pagamentoID.getId());
+        ordemServico.setStatusPagamento(StatusPagamento.PAGO);
+        ordemServicoRepository.save(ordemServico);
+
+        return new OrdemServicoDTO(ordemServico);
     }
 
-    public OrdemServicoDTO acompanharStatusOrdem(String ordemLogin, String ordemSenha){
-        return ordemServicoRepository.findByOrdemLogin(ordemLogin,ordemSenha).
-                stream().
-                map(OrdemServicoDTO::new).
-                findAny().
-                orElseThrow(() -> new ObjectNotFoundException("A ordem com o login %s nao foi localizada." , ordemLogin));
+    /**
+     * Metodo utilizado para autorizar o processo de uma ordem de servico via id e senha da ordem
+     */
+    @Transactional
+    public OrdemServicoDTO autorizarOrdem(String ordemLogin, String ordemSenha, AutorizarOrdemServico autorizarOrdemServico) {
+
+        var ordemServico = ordemServicoRepository.findByOrdemLogin(ordemLogin, ordemSenha).
+                orElseThrow(()-> new ObjectNotFoundException("Ordem %s nao localizada", ordemLogin));
+
+        if (autorizarOrdemServico == AutorizarOrdemServico.APROVAR) {
+            ordemServico.setStatusOrdem(StatusOrdem.APROVADA_PELO_CLIENTE);
+        } else if (autorizarOrdemServico == AutorizarOrdemServico.REPROVAR) {
+            ordemServico.setStatusOrdem(StatusOrdem.ORCAMENTO_REPROVADO);
+        }
+        ordemServicoRepository.save(ordemServico);
+
+        return new OrdemServicoDTO(ordemServico);
+
     }
 
+    /**
+     * Retorna o status da ordem de servico pelo id e senha
+     * */
+    public OrdemServicoDTO acompanharStatusOrdem(String ordemLogin, String ordemSenha) {
+               var ordemParaAcompanhar =  ordemServicoRepository.findByOrdemLogin(ordemLogin, ordemSenha).
+                       orElseThrow(()-> new ObjectNotFoundException("Ordem %s nao localizada", ordemLogin));
+
+               return new OrdemServicoDTO(ordemParaAcompanhar);
+    }
 
 
 }

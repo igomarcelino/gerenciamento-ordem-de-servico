@@ -24,12 +24,11 @@ public class OrdemServicoResumeDTO {
         this.vencimento = vencimento;
     }
     public OrdemServicoResumeDTO(OrdemServicoProjection ordemServicoProjection){
-        setId(ordemServicoProjection.getId());
-        setPagamento_id(ordemServicoProjection.getPagamento_id());
-        setStatusOrdem(ordemServicoProjection.getStatusOrdem());
-        setValor(ordemServicoProjection.getValor());
-        setVencimento(ordemServicoProjection.getVencimento());
-
+        id = ordemServicoProjection.getId();
+        pagamento_id = ordemServicoProjection.getPagamento_id() == null ? 0 : ordemServicoProjection.getPagamento_id();
+        statusOrdem = ordemServicoProjection.getStatusOrdem();
+        valor = ordemServicoProjection.getValor();
+        vencimento = ordemServicoProjection.getVencimento() == null ? LocalDate.now().plusDays(5) : ordemServicoProjection.getVencimento();
     }
 
     public Integer getId() {

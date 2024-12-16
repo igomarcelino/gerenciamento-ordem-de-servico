@@ -67,6 +67,10 @@ public class OrdemServicoController {
     }
 
     //TODO Descrever as funcionalidades desses metodos
+    /**
+     * Esse metodo recebe um id para pesquisar uma ordem de servico, caso a ordem de servico
+     * esteja com o status de finalizada ele permite realizar o pagamento da mesma
+     * */
     @PutMapping(value = "/ordemPagamento/{id}")
     public ResponseEntity<OrdemServicoDTO> realizarPagamento(FormaPagamento formaPagamento, @PathVariable Integer id){
         var ordemServico = ordemServicoService.realizarPagamento(formaPagamento,id);

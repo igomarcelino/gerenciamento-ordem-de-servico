@@ -28,7 +28,7 @@ public class Funcionario extends Pessoa implements UserDetails {
     private String usuarioLogin;
 
     @NotBlank
-    @Size(min = 6, max = 20, message = "a senha deve ter entre 6 e 20 caracteres")
+    @Size(min = 6, message = "a senha deve ter no minimo 6 caracteres")
     @Column(nullable = false,name = "senha_login",columnDefinition = "TEXT")
     private String senhaLogin;
 
