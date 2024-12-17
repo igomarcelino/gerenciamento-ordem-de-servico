@@ -5,11 +5,13 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusPagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoRequestDTO;
+import com.igomarcelino.gerenciamento_ordem_de_servico.projection.OrdemServicoProjection;
 import jakarta.persistence.*;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Random;
 
 @Entity
@@ -35,7 +37,21 @@ public class OrdemServico {
     @Enumerated(EnumType.STRING)
     private AutorizarOrdemServico autorizarOrdemServico;
 
+
+
     public OrdemServico() {
+    }
+
+    public OrdemServico(OrdemServicoProjection ordemServicoProjection) {
+        setId(ordemServicoProjection.getId());
+        setStatusOrdem(ordemServicoProjection.getStatusOrdem());
+        setValor(ordemServicoProjection.getValor());
+        setVencimento(ordemServicoProjection.getVencimento());
+        setPagamento_id(ordemServicoProjection.getPagamento_id());
+        setStatusPagamento(ordemServicoProjection.getStatusPagamento());
+        setOrdemLogin(ordemServicoProjection.getOrdemLogin());
+        setOrdemSenha(ordemServicoProjection.getOrdemSenha());
+        setAutorizarOrdemServico(ordemServicoProjection.getAutorizarOrdemServico());
     }
 
     public BigDecimal getValor() {

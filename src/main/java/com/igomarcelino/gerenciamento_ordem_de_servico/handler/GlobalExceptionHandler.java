@@ -1,5 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.handler;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.BadReqException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.DataAlreadyExistsException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ObjectNotFoundException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ResponseError;
@@ -105,6 +106,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handlerDataAlreadyExistsException(DataAlreadyExistsException e, WebRequest request){
         ResponseError error = responseError(e.getMessage(),HttpStatus.CONFLICT);
         return handleExceptionInternal(e, error,headers(),HttpStatus.CONFLICT, request);
+    }
+
+    @ExceptionHandler({BadReqException.class})
+    private ResponseEntity<Object> handlerBadReqExecption(BadReqException e, WebRequest request){
+        ResponseError error = responseError(e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
+        return handleExceptionInternal(e,error, headers(),HttpStatus.BAD_REQUEST,request);
     }
 
 }

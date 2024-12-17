@@ -18,7 +18,7 @@ public interface OrdemServicoRepository extends JpaRepository<OrdemServico, Inte
             WHERE STATUS_ORDEM = :statusOrdem
             ORDER BY ID;
             """)
-    List<OrdemServicoProjection> findByStatus(String statusOrdem);
+    Optional<List<OrdemServicoProjection>> findByStatus(String statusOrdem);
 
     @Query(nativeQuery = true, value = """
             SELECT  VALOR, OS.ID, OS.STATUS_ORDEM, OS.VENCIMENTO FROM ORDEM_SERVICO OS
@@ -32,7 +32,7 @@ public interface OrdemServicoRepository extends JpaRepository<OrdemServico, Inte
             WHERE OS.ORDEM_LOGIN = :ordemLogin
             AND OS.ORDEM_SENHA = :ordemSenha
             """)
-    Optional<OrdemServicoProjection> findByOrdemLogin(String ordemLogin, String ordemSenha);
+    Optional<OrdemServico> findByOrdemLogin(String ordemLogin, String ordemSenha);
 
 
 }

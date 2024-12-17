@@ -16,4 +16,11 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Intege
     Optional<FuncionarioProjection> findByCPF(String cpf);
 
     Funcionario findByUsuarioLogin(String usuario);
+
+    @Query(nativeQuery = true, value = """
+            SELECT NOME FROM FUNCIONARIO F
+            JOIN ORDEM_SERVICO OS ON OS.ID = F.ID
+            WHERE F.ID  = :id
+            """)
+    String nomeFuncionario(Integer id);
 }

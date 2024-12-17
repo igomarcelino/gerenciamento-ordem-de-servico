@@ -1,5 +1,6 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.service;
 
+import com.igomarcelino.gerenciamento_ordem_de_servico.components.PasswordCriptComponent;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.FuncionarioDTO.FuncionarioDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.FuncionarioDTO.FuncionarioMinDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.entities.Funcionario;
@@ -18,11 +19,12 @@ import java.util.Optional;
 public class FuncionarioService implements UserDetailsService {
     @Autowired
     FuncionarioRepository funcionarioRepository;
+    @Autowired
+    PasswordCriptComponent passwordCriptComponent;
 
     /**
      * Metodo que retorna todos funcionarios
      * */
-
     public List<FuncionarioMinDTO> findAll(){
         return funcionarioRepository.findAll().
                 stream().
@@ -33,7 +35,6 @@ public class FuncionarioService implements UserDetailsService {
     /**
      * Metoto que retorna um Funcionario pelo ID
      * */
-
     public FuncionarioDTO findById(Integer id){
         return funcionarioRepository.findAll().
                 stream().
@@ -47,9 +48,11 @@ public class FuncionarioService implements UserDetailsService {
     /**
      * Salva um funcionario
      * */
-
     public FuncionarioDTO save(FuncionarioDTO funcionarioDTO){
         var funcionario = new Funcionario(funcionarioDTO);
+        // cria o processo de criptografia para o password antes de persistir no banco de dados
+        String passwordEncrypted = passwordCriptComponent.passwordEncoder(funcionario.getPassword());
+        funcionario.setSenhaLogin(passwordEncrypted);
         funcionarioRepository.save(funcionario);
         return new FuncionarioDTO(funcionario);
     }

@@ -3,10 +3,7 @@ package com.igomarcelino.gerenciamento_ordem_de_servico.controller;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.AutorizarOrdemServico;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.FormaPagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
-import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemAprovacaoClienteDTO;
-import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
-import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoRequestDTO;
-import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoResumeDTO;
+import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.*;
 import com.igomarcelino.gerenciamento_ordem_de_servico.service.OrdemServicoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,8 +38,8 @@ public class OrdemServicoController {
 
     @GetMapping(value = "/{id}")
     @Operation(summary = "Ordem por ID", description = "Mostra a ordem de servico pelo id dela")
-    public ResponseEntity<OrdemServicoDTO> findById(@PathVariable Integer id){
-        return ResponseEntity.internalServerError().body(ordemServicoService.findById(id));
+    public ResponseEntity<OrdemServicoCustomDTO> findById(@PathVariable Integer id){
+        return ResponseEntity.ok().body(ordemServicoService.findById(id));
     }
 
     @PutMapping (value = "/atualizar/{id}")
@@ -66,23 +63,30 @@ public class OrdemServicoController {
         return ResponseEntity.ok().body(ordemPorCPF);
     }
 
-    //TODO Descrever as funcionalidades desses metodos
+
+    /**
+     * Esse metodo recebe um id para pesquisar uma ordem de servico, caso a ordem de servico
+     * esteja com o status de finalizada ele permite realizar o pagamento da mesma
+     * */
     @PutMapping(value = "/ordemPagamento/{id}")
+    @Operation(summary = "Realizar o pagamento", description = "Realizar o pagamento fornecendo um id de uma ordem de servico")
     public ResponseEntity<OrdemServicoDTO> realizarPagamento(FormaPagamento formaPagamento, @PathVariable Integer id){
         var ordemServico = ordemServicoService.realizarPagamento(formaPagamento,id);
         return ResponseEntity.ok().body(ordemServico);
     }
 
     @PutMapping(value = "/ordemLogin/autorizar")
-    public ResponseEntity<OrdemServicoDTO> autorizarOrdem(OrdemAprovacaoClienteDTO aprovacaoClienteDTO, AutorizarOrdemServico autorizarOrdemServico){
+    @Operation(summary = "Autorizar ordem de Servico", description = "Endpoint para o cliente poder autorizar ou reprovar a ordem de servico")
+    public ResponseEntity<OrdemServicoCustomDTO> autorizarOrdem(OrdemAcompanhamentoClienteDTO aprovacaoClienteDTO, AutorizarOrdemServico autorizarOrdemServico){
         var ordemServico = ordemServicoService.autorizarOrdem(aprovacaoClienteDTO.getOrdemLogin(), aprovacaoClienteDTO.getOrdemSenha(), autorizarOrdemServico);
         return ResponseEntity.ok().body(ordemServico);
     }
 
     //TODO verificar esse DTO para realizar uma melhoria no retorno dele
     @GetMapping(value = "/ordemLogin/acompanhar")
-    public ResponseEntity<OrdemServicoDTO> acompanharOrdem(OrdemAprovacaoClienteDTO ordemAprovacaoClienteDTO){
-        var ordemServico = ordemServicoService.acompanharStatusOrdem(ordemAprovacaoClienteDTO.getOrdemLogin(), ordemAprovacaoClienteDTO.getOrdemSenha());
+    @Operation(summary = "Ordem por id e senha", description = "Retorna a ordem obtida pelo id informado, contem os servicos na ordem e o status da ordem")
+    public ResponseEntity<OrdemServicoCustomDTO> acompanharOrdem(OrdemAcompanhamentoClienteDTO ordemAcompanhamentoClienteDTO){
+        var ordemServico = ordemServicoService.acompanharStatusOrdem(ordemAcompanhamentoClienteDTO.getOrdemLogin(), ordemAcompanhamentoClienteDTO.getOrdemSenha());
         return ResponseEntity.ok().body(ordemServico);
     }
 

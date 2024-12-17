@@ -15,4 +15,11 @@ public interface ServicoRepository extends JpaRepository<Servico, Integer> {
             WHERE LOWER(DESCRICAO) LIKE %:descricao%;
             """)
     Optional<List<ServicoProjection>> findBydescricao(String descricao);
+
+    @Query(nativeQuery = true, value = """
+            SELECT * FROM SERVICO
+            JOIN SERVICO_BELONGING SB ON SB.SERVICO_ID = SERVICO.ID
+            WHERE ORDEM_ID = :id
+            """)
+    Optional<List<Servico>> findByOrdemId(Integer id);
 }
