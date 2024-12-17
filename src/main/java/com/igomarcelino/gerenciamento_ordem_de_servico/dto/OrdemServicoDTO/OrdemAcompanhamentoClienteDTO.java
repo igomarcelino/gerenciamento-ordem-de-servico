@@ -1,18 +1,12 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO;
 
-import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.AutorizarOrdemServico;
-import com.igomarcelino.gerenciamento_ordem_de_servico.entities.OrdemServico;
-
-import java.time.LocalDate;
-import java.util.Random;
-
-public class OrdemAprovacaoClienteDTO {
+public class OrdemAcompanhamentoClienteDTO {
 
     private String ordemLogin;
     private String ordemSenha;
 
 
-    public OrdemAprovacaoClienteDTO() {
+    public OrdemAcompanhamentoClienteDTO() {
     }
 
     public String getOrdemLogin() {

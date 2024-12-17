@@ -11,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Random;
 
 @Entity
@@ -35,6 +36,8 @@ public class OrdemServico {
 
     @Enumerated(EnumType.STRING)
     private AutorizarOrdemServico autorizarOrdemServico;
+
+
 
     public OrdemServico() {
     }

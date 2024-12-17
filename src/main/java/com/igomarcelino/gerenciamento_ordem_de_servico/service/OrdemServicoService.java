@@ -4,6 +4,7 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.AutorizarOrdemServic
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.FormaPagamento;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusOrdem;
 import com.igomarcelino.gerenciamento_ordem_de_servico.Enum.StatusPagamento;
+import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoCustomDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoRequestDTO;
 import com.igomarcelino.gerenciamento_ordem_de_servico.dto.OrdemServicoDTO.OrdemServicoResumeDTO;
@@ -15,9 +16,12 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.entities.ServicoBelonging
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.BadReqException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.DataAlreadyExistsException;
 import com.igomarcelino.gerenciamento_ordem_de_servico.exceptions.ObjectNotFoundException;
+import com.igomarcelino.gerenciamento_ordem_de_servico.repository.FuncionarioRepository;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.OrdemServicoRepository;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.ServicoBelongingRepository;
+import com.igomarcelino.gerenciamento_ordem_de_servico.repository.ServicoRepository;
 import org.apache.coyote.BadRequestException;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +41,11 @@ public class OrdemServicoService {
     @Autowired
     ServicoService servicoService;
     @Autowired
+    ServicoRepository servicoRepository;
+    @Autowired
     PagamentoService pagamentoService;
+    @Autowired
+    FuncionarioRepository funcionarioRepository;
 
     /**
      * Gerar ordem de servico
@@ -74,8 +82,21 @@ public class OrdemServicoService {
      * Localizar pelo ID
      */
     @Transactional(readOnly = true)
-    public OrdemServicoDTO findById(Integer id) {
-        return ordemServicoRepository.findById(id).map(OrdemServicoDTO::new).get();
+    public OrdemServicoCustomDTO findById(Integer id) {
+        var osRecuperada = ordemServicoRepository.findById(id).
+                orElseThrow(()-> new ObjectNotFoundException("Ordem %d nao localizada", id));
+        // se existir a ordem preencher a lista de servico da ordem
+        List<Servico> servicoList = getServicosPorOrdemId(osRecuperada.getId());
+        // busca o nome do funcionario da ordem
+        String nomeFuncionario = getNomeFuncionario(osRecuperada.getFuncionario_id());
+
+        // atribui os valores ao dto customizado utilizando um builder
+        return OrdemServicoCustomDTO.builder().
+                id(osRecuperada.getId()).
+                nomeFuncionario(nomeFuncionario).
+                statusOrdem(osRecuperada.getStatusOrdem()).
+                valor(osRecuperada.getValor()).
+                servicoList(servicoList).build();
     }
 
     /**
@@ -119,6 +140,9 @@ public class OrdemServicoService {
     public List<OrdemServicoResumeDTO> ordemPorCliente(String cpf) {
         var ordensPorCliente = ordemServicoRepository.findByCpfCliente(cpf).orElseThrow(()-> new ObjectNotFoundException("Nao possui ordens em aberto"));
 
+            if(ordensPorCliente.isEmpty()){
+                throw new ObjectNotFoundException("Nao possui ordens");
+            }
             return ordensPorCliente.stream().map(OrdemServicoResumeDTO::new).toList();
 
     }
@@ -151,31 +175,62 @@ public class OrdemServicoService {
      * Metodo utilizado para autorizar o processo de uma ordem de servico via id e senha da ordem
      */
     @Transactional
-    public OrdemServicoDTO autorizarOrdem(String ordemLogin, String ordemSenha, AutorizarOrdemServico autorizarOrdemServico) {
+    public OrdemServicoCustomDTO autorizarOrdem(String ordemLogin, String ordemSenha, AutorizarOrdemServico autorizarOrdemServico) {
 
-        var ordemServico = ordemServicoRepository.findByOrdemLogin(ordemLogin, ordemSenha).
+        var osRecuperada = ordemServicoRepository.findByOrdemLogin(ordemLogin, ordemSenha).
                 orElseThrow(()-> new ObjectNotFoundException("Ordem %s nao localizada", ordemLogin));
+        // se existir a ordem preencher a lista de servico da ordem
+        List<Servico> servicoList = getServicosPorOrdemId(osRecuperada.getId());
+        // busca o nome do funcionario da ordem
+        String nomeFuncionario = getNomeFuncionario(osRecuperada.getFuncionario_id());
 
         if (autorizarOrdemServico == AutorizarOrdemServico.APROVAR) {
-            ordemServico.setStatusOrdem(StatusOrdem.APROVADA_PELO_CLIENTE);
+            osRecuperada.setStatusOrdem(StatusOrdem.APROVADA_PELO_CLIENTE);
         } else if (autorizarOrdemServico == AutorizarOrdemServico.REPROVAR) {
-            ordemServico.setStatusOrdem(StatusOrdem.ORCAMENTO_REPROVADO);
+            osRecuperada.setStatusOrdem(StatusOrdem.ORCAMENTO_REPROVADO);
         }
-        ordemServicoRepository.save(ordemServico);
+        ordemServicoRepository.save(osRecuperada);
 
-        return new OrdemServicoDTO(ordemServico);
-
+        return OrdemServicoCustomDTO.builder().
+                id(osRecuperada.getId()).
+                nomeFuncionario(nomeFuncionario).
+                statusOrdem(osRecuperada.getStatusOrdem()).
+                valor(osRecuperada.getValor()).
+                servicoList(servicoList).build();
     }
 
     /**
      * Retorna o status da ordem de servico pelo id e senha
      * */
-    public OrdemServicoDTO acompanharStatusOrdem(String ordemLogin, String ordemSenha) {
-               var ordemParaAcompanhar =  ordemServicoRepository.findByOrdemLogin(ordemLogin, ordemSenha).
+    public OrdemServicoCustomDTO acompanharStatusOrdem(String ordemLogin, String ordemSenha) {
+               var osRecuperada =  ordemServicoRepository.findByOrdemLogin(ordemLogin, ordemSenha).
                        orElseThrow(()-> new ObjectNotFoundException("Ordem %s nao localizada", ordemLogin));
+                List<Servico> servicos = getServicosPorOrdemId(osRecuperada.getId());
+                String nomeFuncionario = getNomeFuncionario(osRecuperada.getFuncionario_id());
 
-               return new OrdemServicoDTO(ordemParaAcompanhar);
+                return OrdemServicoCustomDTO.builder().
+                        id(osRecuperada.getId()).
+                        nomeFuncionario(nomeFuncionario).
+                        statusOrdem(osRecuperada.getStatusOrdem()).
+                        valor(osRecuperada.getValor()).
+                        servicoList(servicos).build();
     }
+
+
+    /**
+     * Metodos para reaproveitamento no codigo
+     * Recuperar a lista de serviccos
+     * Recuperar o nome do funcionario presente na ordem
+     * */
+    private List<Servico> getServicosPorOrdemId(Integer ordemId) {
+        return servicoRepository.findByOrdemId(ordemId)
+                .orElseThrow(() -> new ObjectNotFoundException("Nao possui servicos."));
+    }
+
+    private String getNomeFuncionario(Integer funcionarioId) {
+        return funcionarioRepository.nomeFuncionario(funcionarioId);
+    }
+
 
 
 }
