@@ -20,8 +20,6 @@ import com.igomarcelino.gerenciamento_ordem_de_servico.repository.FuncionarioRep
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.OrdemServicoRepository;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.ServicoBelongingRepository;
 import com.igomarcelino.gerenciamento_ordem_de_servico.repository.ServicoRepository;
-import org.apache.coyote.BadRequestException;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +29,6 @@ import java.math.MathContext;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrdemServicoService {
@@ -224,12 +221,26 @@ public class OrdemServicoService {
      * Total a receber por periodo
      */
     @Transactional(readOnly = true)
-    public BigDecimal totalPorPeriodo(LocalDate dataInicio, LocalDate dataFim) {
+    public BigDecimal valoresAPorPeriodo(LocalDate dataInicio, LocalDate dataFim) {
         var ordensPorPeriodo = ordemServicoRepository.findAll();
 
         return ordensPorPeriodo.stream().filter(ordem ->
                         ordem.getVencimento().isAfter(dataInicio) && ordem.getVencimento().isBefore(dataFim)). // verifica a data de vencimento
                 filter(ordemServico -> ordemServico.getStatusPagamento().equals(StatusPagamento.NAO_PAGO)). // verifica se a ordem ja nao foi paga
+                filter(ordemServico -> ordemServico.getValor() != null). // verifica se nao a ordem com valor nulo
+                map(ordemServico -> ordemServico.getValor()). // transforma em um stream de BigDecimal
+                reduce(BigDecimal.ZERO, BigDecimal::add).round(MathContext.DECIMAL32); // retorna um BigDecimal com arredondamento de casa decimal
+    }
+    /**
+     * Retorna um total recebido por periodo
+     * */
+    @Transactional(readOnly = true)
+    public BigDecimal valoresRecebidos(LocalDate dataInicio, LocalDate dataFim) {
+        var ordensPorPeriodo = ordemServicoRepository.findAll();
+
+        return ordensPorPeriodo.stream().filter(ordem ->
+                ordem.getVencimento().isAfter(dataInicio) && ordem.getVencimento().isBefore(dataFim)). // verifica a data de vencimento
+                filter(ordemServico -> ordemServico.getStatusPagamento().equals(StatusPagamento.PAGO)). // verifica se a ordem ja nao foi paga
                 filter(ordemServico -> ordemServico.getValor() != null). // verifica se nao a ordem com valor nulo
                 map(ordemServico -> ordemServico.getValor()). // transforma em um stream de BigDecimal
                 reduce(BigDecimal.ZERO, BigDecimal::add).round(MathContext.DECIMAL32); // retorna um BigDecimal com arredondamento de casa decimal

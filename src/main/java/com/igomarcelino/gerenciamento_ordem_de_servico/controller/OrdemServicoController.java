@@ -96,11 +96,22 @@ public class OrdemServicoController {
      * Total a receber por periodo
      *
      * */
-    @GetMapping(value = "/totalPorPeriodo")
-    @Operation(summary = "Total por periodo", description = "Retorna o total a receber pelo periodo informado")
-    public ResponseEntity<BigDecimal> totalPorPeriodo(LocalDate dataInicio, LocalDate dataFim){
-         var totalPorPeriodo = ordemServicoService.totalPorPeriodo(dataInicio,dataFim);
-        return ResponseEntity.ok(totalPorPeriodo);
+    @GetMapping(value = "/vencimentosPorPeriodo")
+    @Operation(summary = "vencimento por periodo", description = "Retorna o total a receber pelo periodo informado AAAA-MM-DD")
+    public ResponseEntity<BigDecimal> valoresAReceberPorPeriodo(LocalDate dataInicio, LocalDate dataFim){
+         var valoresAReceber = ordemServicoService.valoresAPorPeriodo(dataInicio,dataFim);
+        return ResponseEntity.ok(valoresAReceber);
     }
 
+    /**
+     * Total recebido por periodo
+     * */
+
+    @GetMapping(value = "/recebimentoPorPeriodo")
+    @Operation(summary = "Recebimento por periodo",description = "Total recebido pelo periodo selecionado AAAA-MM-DD")
+    public ResponseEntity<BigDecimal> totalRecebidoPorPeriodo(LocalDate dataInicio, LocalDate dataFim){
+
+        var valorRecebidoPorPeriodo = ordemServicoService.valoresRecebidos(dataInicio, dataFim);
+        return ResponseEntity.ok(valorRecebidoPorPeriodo);
+    }
 }
