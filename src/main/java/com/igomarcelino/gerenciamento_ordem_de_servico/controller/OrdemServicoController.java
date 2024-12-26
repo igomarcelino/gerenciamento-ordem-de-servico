@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -88,6 +90,17 @@ public class OrdemServicoController {
     public ResponseEntity<OrdemServicoCustomDTO> acompanharOrdem(OrdemAcompanhamentoClienteDTO ordemAcompanhamentoClienteDTO){
         var ordemServico = ordemServicoService.acompanharStatusOrdem(ordemAcompanhamentoClienteDTO.getOrdemLogin(), ordemAcompanhamentoClienteDTO.getOrdemSenha());
         return ResponseEntity.ok().body(ordemServico);
+    }
+
+    /**
+     * Total a receber por periodo
+     *
+     * */
+    @GetMapping(value = "/totalPorPeriodo")
+    @Operation(summary = "Total por periodo", description = "Retorna o total a receber pelo periodo informado")
+    public ResponseEntity<BigDecimal> totalPorPeriodo(LocalDate dataInicio, LocalDate dataFim){
+         var totalPorPeriodo = ordemServicoService.totalPorPeriodo(dataInicio,dataFim);
+        return ResponseEntity.ok(totalPorPeriodo);
     }
 
 }

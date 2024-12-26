@@ -13,8 +13,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 
 import java.util.List;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 
 @Configuration
@@ -33,12 +36,12 @@ public class SecurityConfig {
                                 requestMatchers(HttpMethod.GET).hasAnyAuthority("user", "admin").
                                 requestMatchers(HttpMethod.PUT).hasAnyAuthority("user", "admin").
                                 requestMatchers(HttpMethod.DELETE, "/**").hasAuthority("admin"). // permite acesso a todos os metodos e endpoints
-                                anyRequest().authenticated()).formLogin(Customizer.withDefaults()).csrf(csrf -> csrf
+                                anyRequest().authenticated()).csrf(csrf -> csrf
                         .ignoringRequestMatchers("/**") // Desativa CSRF para toda API
                 )
                 .headers(headers -> headers
-                        .frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()).disable() // Permite que o H2 Console use frames
-                ).userDetailsService(funcionarioService).build();
+                        .frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()) // Permite que o H2 Console use frames
+                ).httpBasic(withDefaults()).userDetailsService(funcionarioService).build();
     }
 
 

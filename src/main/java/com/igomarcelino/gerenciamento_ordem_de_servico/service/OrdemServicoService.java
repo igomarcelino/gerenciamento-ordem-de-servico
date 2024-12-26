@@ -27,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -84,7 +86,7 @@ public class OrdemServicoService {
     @Transactional(readOnly = true)
     public OrdemServicoCustomDTO findById(Integer id) {
         var osRecuperada = ordemServicoRepository.findById(id).
-                orElseThrow(()-> new ObjectNotFoundException("Ordem %d nao localizada", id));
+                orElseThrow(() -> new ObjectNotFoundException("Ordem %d nao localizada", id));
         // se existir a ordem preencher a lista de servico da ordem
         List<Servico> servicoList = getServicosPorOrdemId(osRecuperada.getId());
         // busca o nome do funcionario da ordem
@@ -128,7 +130,7 @@ public class OrdemServicoService {
     @Transactional(readOnly = true)
     public List<OrdemServicoRequestDTO> ordensPorStatus(StatusOrdem statusOrdem) {
         var ordemPorStatus = ordemServicoRepository.findByStatus(statusOrdem.name()).
-                orElseThrow(()-> new ObjectNotFoundException("Status %s nao possui ordens", statusOrdem.name().replace("_", " ")));
+                orElseThrow(() -> new ObjectNotFoundException("Status %s nao possui ordens", statusOrdem.name().replace("_", " ")));
 
         return ordemPorStatus.stream().map(OrdemServicoRequestDTO::new).toList();
     }
@@ -138,12 +140,12 @@ public class OrdemServicoService {
      */
     @Transactional(readOnly = true)
     public List<OrdemServicoResumeDTO> ordemPorCliente(String cpf) {
-        var ordensPorCliente = ordemServicoRepository.findByCpfCliente(cpf).orElseThrow(()-> new ObjectNotFoundException("Nao possui ordens em aberto"));
+        var ordensPorCliente = ordemServicoRepository.findByCpfCliente(cpf).orElseThrow(() -> new ObjectNotFoundException("Nao possui ordens em aberto"));
 
-            if(ordensPorCliente.isEmpty()){
-                throw new ObjectNotFoundException("Nao possui ordens");
-            }
-            return ordensPorCliente.stream().map(OrdemServicoResumeDTO::new).toList();
+        if (ordensPorCliente.isEmpty()) {
+            throw new ObjectNotFoundException("Nao possui ordens");
+        }
+        return ordensPorCliente.stream().map(OrdemServicoResumeDTO::new).toList();
 
     }
 
@@ -178,7 +180,7 @@ public class OrdemServicoService {
     public OrdemServicoCustomDTO autorizarOrdem(String ordemLogin, String ordemSenha, AutorizarOrdemServico autorizarOrdemServico) {
 
         var osRecuperada = ordemServicoRepository.findByOrdemLogin(ordemLogin, ordemSenha).
-                orElseThrow(()-> new ObjectNotFoundException("Ordem %s nao localizada", ordemLogin));
+                orElseThrow(() -> new ObjectNotFoundException("Ordem %s nao localizada", ordemLogin));
         // se existir a ordem preencher a lista de servico da ordem
         List<Servico> servicoList = getServicosPorOrdemId(osRecuperada.getId());
         // busca o nome do funcionario da ordem
@@ -201,27 +203,43 @@ public class OrdemServicoService {
 
     /**
      * Retorna o status da ordem de servico pelo id e senha
-     * */
-    public OrdemServicoCustomDTO acompanharStatusOrdem(String ordemLogin, String ordemSenha) {
-               var osRecuperada =  ordemServicoRepository.findByOrdemLogin(ordemLogin, ordemSenha).
-                       orElseThrow(()-> new ObjectNotFoundException("Ordem %s nao localizada", ordemLogin));
-                List<Servico> servicos = getServicosPorOrdemId(osRecuperada.getId());
-                String nomeFuncionario = getNomeFuncionario(osRecuperada.getFuncionario_id());
+     */
 
-                return OrdemServicoCustomDTO.builder().
-                        id(osRecuperada.getId()).
-                        nomeFuncionario(nomeFuncionario).
-                        statusOrdem(osRecuperada.getStatusOrdem()).
-                        valor(osRecuperada.getValor()).
-                        servicoList(servicos).build();
+    @Transactional
+    public OrdemServicoCustomDTO acompanharStatusOrdem(String ordemLogin, String ordemSenha) {
+        var osRecuperada = ordemServicoRepository.findByOrdemLogin(ordemLogin, ordemSenha).
+                orElseThrow(() -> new ObjectNotFoundException("Ordem %s nao localizada", ordemLogin));
+        List<Servico> servicos = getServicosPorOrdemId(osRecuperada.getId());
+        String nomeFuncionario = getNomeFuncionario(osRecuperada.getFuncionario_id());
+
+        return OrdemServicoCustomDTO.builder().
+                id(osRecuperada.getId()).
+                nomeFuncionario(nomeFuncionario).
+                statusOrdem(osRecuperada.getStatusOrdem()).
+                valor(osRecuperada.getValor()).
+                servicoList(servicos).build();
     }
 
+    /**
+     * Total a receber por periodo
+     */
+    @Transactional(readOnly = true)
+    public BigDecimal totalPorPeriodo(LocalDate dataInicio, LocalDate dataFim) {
+        var ordensPorPeriodo = ordemServicoRepository.findAll();
+
+        return ordensPorPeriodo.stream().filter(ordem ->
+                        ordem.getVencimento().isAfter(dataInicio) && ordem.getVencimento().isBefore(dataFim)). // verifica a data de vencimento
+                filter(ordemServico -> ordemServico.getStatusPagamento().equals(StatusPagamento.NAO_PAGO)). // verifica se a ordem ja nao foi paga
+                filter(ordemServico -> ordemServico.getValor() != null). // verifica se nao a ordem com valor nulo
+                map(ordemServico -> ordemServico.getValor()). // transforma em um stream de BigDecimal
+                reduce(BigDecimal.ZERO, BigDecimal::add).round(MathContext.DECIMAL32); // retorna um BigDecimal com arredondamento de casa decimal
+    }
 
     /**
      * Metodos para reaproveitamento no codigo
      * Recuperar a lista de serviccos
      * Recuperar o nome do funcionario presente na ordem
-     * */
+     */
     private List<Servico> getServicosPorOrdemId(Integer ordemId) {
         return servicoRepository.findByOrdemId(ordemId)
                 .orElseThrow(() -> new ObjectNotFoundException("Nao possui servicos."));
@@ -230,7 +248,6 @@ public class OrdemServicoService {
     private String getNomeFuncionario(Integer funcionarioId) {
         return funcionarioRepository.nomeFuncionario(funcionarioId);
     }
-
 
 
 }
