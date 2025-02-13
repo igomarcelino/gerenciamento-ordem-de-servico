@@ -11,11 +11,11 @@ public class FuncionarioMinDTO {
     public FuncionarioMinDTO() {
     }
 
-    public FuncionarioMinDTO(Funcionario funcionario) {
+   /* public FuncionarioMinDTO(Funcionario funcionario) {
         id = funcionario.getId();
         nome = funcionario.getNome();
         cpf = funcionario.getCpf();
-    }
+    }*/
 
     public Integer getId() {
         return id;

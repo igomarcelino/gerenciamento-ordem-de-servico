@@ -1,54 +1,65 @@
 package com.igomarcelino.gerenciamento_ordem_de_servico.config;
 
-import com.igomarcelino.gerenciamento_ordem_de_servico.service.FuncionarioService;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 
-import java.util.List;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
-
-@Configuration
 @EnableWebSecurity
+@Configuration
 public class SecurityConfig {
 
-    @Autowired
-    FuncionarioService funcionarioService;
+    @Value("${jwt.private.key}")
+    private RSAPrivateKey privateKey;
+
+    @Value("${jwt.public.key}")
+    private RSAPublicKey publicKey;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
-        return security.authorizeHttpRequests(aut ->
-                        aut.requestMatchers("/login/**").permitAll(). // qualquer um pode visualizar a tela de login
-                                requestMatchers("/h2-console/**").hasAuthority("admin").
-                                requestMatchers(HttpMethod.POST).hasAnyAuthority("user", "admin").
-                                requestMatchers(HttpMethod.GET).hasAnyAuthority("user", "admin").
-                                requestMatchers(HttpMethod.PUT).hasAnyAuthority("user", "admin").
-                                requestMatchers(HttpMethod.DELETE, "/**").hasAuthority("admin"). // permite acesso a todos os metodos e endpoints
-                                anyRequest().authenticated()).csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/**") // Desativa CSRF para toda API
-                )
-                .headers(headers -> headers
-                        .frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()) // Permite que o H2 Console use frames
-                ).httpBasic(withDefaults()).userDetailsService(funcionarioService).build();
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+        return httpSecurity.authorizeHttpRequests(autho ->
+                autho.requestMatchers("/h2-console/**").permitAll().
+                        requestMatchers("/login/**").permitAll().
+                        anyRequest().authenticated()).
+                csrf(CsrfConfigurer::disable).
+                headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)).
+                oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults())).
+                sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).
+                build();
     }
 
+    @Bean
+    public JwtEncoder jwtEncoder(){
+        JWK jwk = new RSAKey.Builder(this.publicKey).privateKey(privateKey).build();
+        var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
+    }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public JwtDecoder jwtDecoder(){
+        return NimbusJwtDecoder.withPublicKey(publicKey).build();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
-
 }

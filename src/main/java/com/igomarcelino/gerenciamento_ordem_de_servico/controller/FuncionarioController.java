@@ -21,11 +21,11 @@ public class FuncionarioController {
     @Autowired
     FuncionarioService funcionarioService;
 
-    @GetMapping
+   /* @GetMapping
     @Operation(summary = "Retorna todos Funcionarios", description = "Retorna uma lista contendo todos os funcionarios")
     public ResponseEntity<List<FuncionarioMinDTO>> finddAll(){
         return ResponseEntity.ok().body(funcionarioService.findAll());
-    }
+    }*/
 
     @GetMapping(value = "/{id}")
     @Operation(summary = "Busca pelo ID ", description = "Retorna um Funcionario pelo id caso exista")
@@ -33,12 +33,12 @@ public class FuncionarioController {
         return ResponseEntity.ok().body(funcionarioService.findById(id));
     }
 
-    @PutMapping(value = "update/{id}")
+    /*@PutMapping(value = "update/{id}")
     @Operation(summary = "Atualiza pelo id", description = "Atualiza um funcionario pelo ID se existir")
     public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody FuncionarioDTO funcionarioDTO){
         funcionarioService.update(id,funcionarioDTO);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "Deleta pelo id", description = "Deleta um funcionario pelo ID se ele existir")
@@ -53,12 +53,12 @@ public class FuncionarioController {
         return ResponseEntity.ok().body(funcionarioService.findByCPF(cpf));
     }
 
-    @PostMapping
+   /* @PostMapping
     @Operation(summary = "Cria funcionario", description = "Cria um funcionario baseado no json informado")
     public ResponseEntity<FuncionarioDTO> save(@RequestBody FuncionarioDTO funcionarioDTO, UriComponentsBuilder builder){
         var funcionarioSaved = funcionarioService.save(funcionarioDTO);
         URI uri = builder.path("funcionario/{id}").buildAndExpand(funcionarioSaved.getId()).toUri();
         return ResponseEntity.created(uri).body(funcionarioSaved);
-    }
+    }*/
 
 }

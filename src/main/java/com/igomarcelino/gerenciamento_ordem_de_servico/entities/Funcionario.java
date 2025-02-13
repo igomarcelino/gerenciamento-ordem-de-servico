@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-public class Funcionario extends Pessoa implements UserDetails {
+public class Funcionario  {
 
 
     @Id
@@ -56,16 +56,13 @@ public class Funcionario extends Pessoa implements UserDetails {
         BeanUtils.copyProperties(funcionarioDTO,this);
     }
 
-    @Override
     public Integer getId() {
         return id;
     }
 
-    @Override
     public void setId(Integer id) {
         this.id = id;
     }
-
 
     public String getUsuarioLogin() {
         return usuarioLogin;
@@ -110,46 +107,5 @@ public class Funcionario extends Pessoa implements UserDetails {
                 ", senhaLogin='" + senhaLogin + '\'' +
                 '}';
     }
-
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
-        for (Roles roles : rolesList){
-            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(roles.getRoleName());
-            grantedAuthorityList.add(simpleGrantedAuthority);
-        }
-
-        return grantedAuthorityList;
-    }
-
-    @Override
-    public String getPassword() {
-        return senhaLogin;
-    }
-
-    @Override
-    public String getUsername() {
-        return usuarioLogin;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    
 }
