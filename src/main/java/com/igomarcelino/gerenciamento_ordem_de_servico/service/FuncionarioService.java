@@ -25,12 +25,12 @@ public class FuncionarioService {
     /**
      * Metodo que retorna todos funcionarios
      * */
-    /*public List<FuncionarioMinDTO> findAll(){
+    public List<FuncionarioMinDTO> findAll(){
         return funcionarioRepository.findAll().
                 stream().
                 map(FuncionarioMinDTO::new).
                 toList();
-    }*/
+    }
 
     /**
      * Metoto que retorna um Funcionario pelo ID
@@ -48,31 +48,31 @@ public class FuncionarioService {
     /**
      * Salva um funcionario
      * */
-//    public FuncionarioDTO save(FuncionarioDTO funcionarioDTO){
-//        var funcionario = new Funcionario(funcionarioDTO);
-//        // cria o processo de criptografia para o password antes de persistir no banco de dados
-//        String passwordEncrypted = passwordCriptComponent.passwordEncoder(funcionario.getPassword());
-//        funcionario.setSenhaLogin(passwordEncrypted);
-//        funcionarioRepository.save(funcionario);
-//        return new FuncionarioDTO(funcionario);
-//    }
+    public FuncionarioDTO save(FuncionarioDTO funcionarioDTO){
+        var funcionario = new Funcionario(funcionarioDTO);
+        // cria o processo de criptografia para o password antes de persistir no banco de dados
+        String passwordEncrypted = passwordCriptComponent.passwordEncoder(funcionario.getSenhaLogin());
+        funcionario.setSenhaLogin(passwordEncrypted);
+        funcionarioRepository.save(funcionario);
+        return new FuncionarioDTO(funcionario);
+    }
 
 
     /**
      * Metodo para atualizar um Funcionario pelo ID
      * */
 
-//    public void update(Integer id, FuncionarioDTO funcionarioDTO){
-//        Optional<Funcionario> funcinonario = funcionarioRepository.findById(id);
-//        if (!funcinonario.isEmpty()) {
-//            funcinonario.get().setNome(funcionarioDTO.getNome());
-//            funcinonario.get().setEmail(funcionarioDTO.getEmail());
-//            funcinonario.get().setTelefone(funcionarioDTO.getTelefone());
-//            funcionarioRepository.save(funcinonario.get());
-//        }else {
-//            throw  new ObjectNotFoundException("Funcionario com o ID %d nao localizado", id);
-//        }
-//    }
+    public void update(Integer id, FuncionarioDTO funcionarioDTO){
+        Optional<Funcionario> funcinonario = funcionarioRepository.findById(id);
+        if (!funcinonario.isEmpty()) {
+            funcinonario.get().setNome(funcionarioDTO.getNome());
+            funcinonario.get().setEmail(funcionarioDTO.getEmail());
+            funcinonario.get().setTelefone(funcionarioDTO.getTelefone());
+            funcionarioRepository.save(funcinonario.get());
+        }else {
+            throw  new ObjectNotFoundException("Funcionario com o ID %d nao localizado", id);
+        }
+    }
 
     /**
      * Metodo para deletar um funcionario

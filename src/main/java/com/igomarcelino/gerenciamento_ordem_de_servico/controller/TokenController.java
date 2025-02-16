@@ -33,6 +33,9 @@ public class TokenController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO){
+        /**
+         * TODO Fazer um metodo para validar o login com os funcionarios do banco de dados
+         * */
         var user = funcionarioService.loadUserByUsername(loginRequestDTO.username());
 
         var now = Instant.now();
