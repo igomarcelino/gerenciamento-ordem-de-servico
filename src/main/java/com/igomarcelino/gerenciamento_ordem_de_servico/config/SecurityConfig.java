@@ -7,6 +7,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,9 +39,10 @@ public class SecurityConfig {
         return httpSecurity.authorizeHttpRequests(autho ->
                 autho.requestMatchers("/h2-console/**").permitAll().
                         requestMatchers("/login/**").permitAll().
+                        requestMatchers(HttpMethod.OPTIONS,"/**").permitAll().
                         anyRequest().authenticated()).
-                csrf(CsrfConfigurer::disable).
-                headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)).
+                csrf(csrf -> csrf.ignoringRequestMatchers("/**")).
+                headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)).
                 oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults())).
                 sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).
                 build();
