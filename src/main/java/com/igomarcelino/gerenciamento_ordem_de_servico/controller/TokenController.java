@@ -41,7 +41,7 @@ public class TokenController {
         var now = Instant.now();
         var expiresIn = 1000L;
 
-        var scope = user.getRolesList().stream().map(Roles::getRoleName).collect(Collectors.joining(" "));
+        var scope = user.getRolesList().stream().map(Roles::getRoleName).collect(Collectors.joining(""));
         var claims = JwtClaimsSet.builder().
                 issuer("back-OrdemServico").
                 subject(user.getId().toString()).
