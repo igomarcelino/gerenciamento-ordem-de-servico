@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class FuncionarioService implements UserDetailsService {
+public class FuncionarioService {
     @Autowired
     FuncionarioRepository funcionarioRepository;
     @Autowired
@@ -51,7 +51,7 @@ public class FuncionarioService implements UserDetailsService {
     public FuncionarioDTO save(FuncionarioDTO funcionarioDTO){
         var funcionario = new Funcionario(funcionarioDTO);
         // cria o processo de criptografia para o password antes de persistir no banco de dados
-        String passwordEncrypted = passwordCriptComponent.passwordEncoder(funcionario.getPassword());
+        String passwordEncrypted = passwordCriptComponent.passwordEncoder(funcionario.getSenhaLogin());
         funcionario.setSenhaLogin(passwordEncrypted);
         funcionarioRepository.save(funcionario);
         return new FuncionarioDTO(funcionario);
@@ -102,8 +102,8 @@ public class FuncionarioService implements UserDetailsService {
     }
 
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+    public Funcionario loadUserByUsername(String username) throws UsernameNotFoundException {
         var funcionario = funcionarioRepository.findByUsuarioLogin(username);
         return funcionario;
     }

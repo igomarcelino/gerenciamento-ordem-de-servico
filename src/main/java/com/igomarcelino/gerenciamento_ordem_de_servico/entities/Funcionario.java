@@ -14,13 +14,32 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-public class Funcionario extends Pessoa implements UserDetails {
+public class Funcionario  {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "funcionario_id")
     private Integer id;
+
+    @NotBlank
+    @Size(min = 2, max = 50, message = "O nome deve ter entre 2 e 50")
+    @Column(nullable = false)
+    private String nome;
+
+    @NotBlank
+    @Column(nullable = false)
+    private String cpf;
+
+
+    @NotBlank
+    @Column(nullable = false)
+    private String email;
+
+    @NotBlank
+    @Column(nullable = false)
+    private String telefone;
+
 
     @NotBlank
     @Size(min = 6, max = 20, message = "O login deve ter entre 6 e 20 caracteres")
@@ -56,16 +75,45 @@ public class Funcionario extends Pessoa implements UserDetails {
         BeanUtils.copyProperties(funcionarioDTO,this);
     }
 
-    @Override
     public Integer getId() {
         return id;
     }
 
-    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
 
     public String getUsuarioLogin() {
         return usuarioLogin;
@@ -110,46 +158,5 @@ public class Funcionario extends Pessoa implements UserDetails {
                 ", senhaLogin='" + senhaLogin + '\'' +
                 '}';
     }
-
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
-        for (Roles roles : rolesList){
-            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(roles.getRoleName());
-            grantedAuthorityList.add(simpleGrantedAuthority);
-        }
-
-        return grantedAuthorityList;
-    }
-
-    @Override
-    public String getPassword() {
-        return senhaLogin;
-    }
-
-    @Override
-    public String getUsername() {
-        return usuarioLogin;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    
 }

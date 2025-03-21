@@ -14,7 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-
+@CrossOrigin(origins = "http://127.0.0.1:5500", maxAge = 3600)
 @RestController
 @RequestMapping(value = "/cliente")
 @Tag(name = "Cliente")
@@ -22,6 +22,7 @@ public class ClienteController {
 
     @Autowired
     ClienteService clienteService;
+
 
     @GetMapping
     @Operation(summary = "Clientes", description = "Lista contendo todos os clientes")
