@@ -40,6 +40,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity.authorizeHttpRequests(autho ->
                 autho.requestMatchers("/h2-console/**").permitAll().
+                        requestMatchers("/swagger-ui/**").permitAll().
                         requestMatchers("/login/**").permitAll().
                         requestMatchers(HttpMethod.OPTIONS,"/**").permitAll().
                         anyRequest().authenticated()).

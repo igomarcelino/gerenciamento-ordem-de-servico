@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "ordem_servico",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
