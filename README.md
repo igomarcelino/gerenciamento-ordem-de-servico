@@ -1,3 +1,5 @@
+# Esse projeto so esta aqui porque foi o meu primeiro, eu olho para ele e vejo o como estou evoluindo nos novos que estou fazendo.
+
 ### Enunciado
 
 **Enunciado do Problema: Gerenciamento de Ordem de Serviço**
